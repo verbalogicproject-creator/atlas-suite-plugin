@@ -14,6 +14,9 @@ deployed, or released.
   resolver or database implementation.
 - A documented Project Atlas frontend pipeline splitting `project-atlas.json`,
   `content.json`, `project-atlas.css`, `project-atlas.html`, and receipts.
+- A provider-neutral Claude Code marketplace descriptor with no product gate,
+  provider account requirement, model-provider requirement, or runtime network
+  requirement.
 - Preserved KG-RAG Specialist baseline materials, a source-grounded
   deterministic-RAG knowledge release, validators, and provenance records.
 - Local tests for plugin structure, direct/bridge plan parity, missing-framework
@@ -28,4 +31,5 @@ deployed, or released.
   passes 35 warning-strict tests.
 - Exact artifact manifests and final-byte paired checks passed independent
   closure review.
-- The candidate remains intentionally uninstalled and has no marketplace entry.
+- The candidate remains intentionally uninstalled and has no hosted marketplace
+  publication.

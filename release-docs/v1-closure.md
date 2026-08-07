@@ -46,7 +46,11 @@ the plugin or authorize any other effect.
 - Seven manifest-declared skills were present; missing framework resolution
   failed closed.
 - Baseline identity and deterministic-RAG KB validation passed, and the source
-  contained no marketplace or runtime database/model/environment artifacts.
+- The provider-neutral Claude Code marketplace descriptor has no product gate,
+  provider account requirement, model-provider requirement, or runtime network
+  requirement.
+- The source contained no install action or runtime database/model/environment
+  artifacts.
 - The paired framework passed 35 warning-strict tests; its integrity,
   promotion-binding, and exact-text generation repairs are documented in its
   own `docs/v1-closure.md`.
@@ -65,8 +69,8 @@ plugin remains uninstalled unless fresh exact installation authority is given.
 ## Deferred gates and non-claims
 
 V1 does not claim persistent plugin installation or fresh-thread dogfood,
-marketplace registration, sharing, live source acquisition/promotion, v2
-ranking scores, semantic/reranker quality, model serving, Termux/proot
+hosted marketplace registration, sharing, live source acquisition/promotion,
+v2 ranking scores, semantic/reranker quality, model serving, Termux/proot
 cross-environment operation, publication, deployment, or market validation.
 
 ## Final reproduction gate

@@ -85,7 +85,8 @@ authorized and observable.
 
 ## Publication boundary
 
-No marketplace entry is planned for v1. Any later marketplace, share link,
-public repository, package publication, or hosted connection is a separate
-release with its own sanitized source ledger, compatibility matrix, security
-review, installation/removal proof, and explicit owner approval.
+V1 includes only a provider-neutral Claude Code marketplace descriptor. Any
+later hosted marketplace submission, share link, package publication, or
+hosted connection is a separate release with its own sanitized source ledger,
+compatibility matrix, security review, installation/removal proof, and explicit
+owner approval.

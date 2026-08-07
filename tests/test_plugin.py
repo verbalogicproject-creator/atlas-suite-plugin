@@ -116,13 +116,50 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(receipt["status"], "passed")
         self.assertEqual(receipt["baseline_tree"], {"file_count": 63, "canonical_tree_sha256": baseline["canonical_tree_sha256"], "status": "verified"})
 
-    def test_no_marketplace_or_runtime_artifacts(self) -> None:
+    def test_provider_neutral_marketplace_descriptor(self) -> None:
+        marketplace = json.loads((ROOT / "marketplace" / "claude-code" / "marketplace.json").read_text(encoding="utf-8"))
+        self.assertEqual(marketplace["name"], "claude-code-provider-neutral")
+        self.assertEqual(marketplace["interface"]["displayName"], "Provider Neutral Claude Code")
+        self.assertEqual(len(marketplace["plugins"]), 1)
+        entry = marketplace["plugins"][0]
+        self.assertEqual(entry["name"], "atlas-suite-plugin")
+        self.assertEqual(entry["source"], {
+            "source": "git",
+            "url": "https://github.com/verbalogicproject-creator/atlas-suite-plugin",
+            "ref": "main",
+        })
+        self.assertEqual(entry["policy"], {"installation": "AVAILABLE", "authentication": "ON_INSTALL"})
+        self.assertNotIn("products", entry["policy"])
+        self.assertTrue(entry["providerNeutral"])
+        self.assertEqual(
+            entry["runtime"],
+            {
+                "requiresProviderAccount": False,
+                "requiresNetworkAtUse": False,
+                "requiresModelProvider": False,
+            },
+        )
+
+    def test_no_unapproved_marketplace_or_runtime_artifacts(self) -> None:
         relative_paths = [
             path.relative_to(ROOT).as_posix()
             for path in ROOT.rglob("*")
             if path.is_file() and not (IGNORED_TREE_PARTS & set(path.relative_to(ROOT).parts))
         ]
-        self.assertFalse(any("marketplace" in path.casefold() for path in relative_paths))
+        approved_marketplace_paths = {
+            "marketplace/claude-code/README.md",
+            "marketplace/claude-code/marketplace.json",
+        }
+        self.assertFalse(
+            any(
+                "marketplace" in path.casefold()
+                and path not in approved_marketplace_paths
+                and "release-docs" not in path
+                and "skills/kg-rag-specialist" not in path
+                and path not in {"README.md", "CHANGELOG.md"}
+                for path in relative_paths
+            )
+        )
         forbidden_suffixes = {".db", ".sqlite", ".gguf", ".env"}
         self.assertFalse(any(Path(path).suffix.casefold() in forbidden_suffixes for path in relative_paths))
 

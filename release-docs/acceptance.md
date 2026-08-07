@@ -8,8 +8,11 @@
 - the bridge fails closed when the framework cannot be resolved;
 - baseline cookbook and recipe registry match pinned digests and 18 recipes;
 - deterministic-RAG KB validation passes and claim sources resolve;
-- source contains no marketplace entry, install action, credentials, cache,
-  model, database, private body, or absolute device path;
+- source contains no install action, credentials, cache, model, database,
+  private body, or absolute device path;
+- the provider-neutral Claude Code marketplace descriptor has no product gate,
+  provider account requirement, model-provider requirement, or runtime network
+  requirement;
 - Project Atlas frontend docs preserve the source-of-truth split:
   `project-atlas.json` for verifiable canonical data, `content.json` for
   editable display/markdown content, and `project-atlas.css` for visual
@@ -26,7 +29,7 @@ scripts, and local documentation.
 
 Deferred: direct installation/removal dogfood, installed-skill invocation in a
 fresh Codex thread, live acquisition/promotion, models, v2 ranking replay,
-marketplace, and publication. The paired framework's exact-text
+hosted marketplace publication, and publication. The paired framework's exact-text
 generation rule is an intentional v1 fail-closed boundary; the plugin does not
 weaken or reinterpret it.
 

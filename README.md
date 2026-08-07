@@ -15,9 +15,11 @@ Skills:
 - `atlas-suite-plugin:evidence-rules-atlas`
 - `atlas-suite-plugin:kg-rag-specialist`
 
-The plugin is intentionally not installed and has no marketplace entry in v1.
-Direct installation, cache updates, removal, marketplace changes, publication,
-and sharing each remain separate user-approved effects.
+The plugin is intentionally not installed. It includes a provider-neutral
+Claude Code marketplace descriptor under `marketplace/claude-code/` for
+distribution metadata. Direct installation, cache updates, removal, hosted
+marketplace publication, marketplace mutation, and sharing each remain separate
+user-approved effects.
 
 ## Paired local use
 

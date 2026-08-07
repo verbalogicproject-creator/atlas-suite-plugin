@@ -59,7 +59,17 @@ protected HTML IDs, and contract comments are unchanged.
 
 ## Installation boundary
 
-V1 contains no marketplace file and no cachebuster action. Direct installation
-must target the exact verified repository path and remain beside existing
-skills. Installation, reinstall, removal, and any cache update are protected
-effects and need separate approval. Never edit the installed in-the-loop cache.
+V1 contains no hosted marketplace publication and no cachebuster action. Direct
+installation must target the exact verified repository path and remain beside
+existing skills. Installation, reinstall, removal, and any cache update are
+protected effects and need separate approval. Never edit the installed
+in-the-loop cache.
+
+## Marketplace descriptor
+
+The committed `marketplace/claude-code/marketplace.json` is provider-neutral
+distribution metadata. It points to the Git source, omits `policy.products`,
+and declares no provider account, model provider, or runtime network
+requirement. Hosts that require local marketplace paths may translate the git
+source after cloning; that translation is host-specific and is not an
+installation receipt.
