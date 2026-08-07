@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 FRAMEWORK = ROOT.parent / "deterministic-kg-rag-framework"
+IGNORED_TREE_PARTS = {".git", ".dogfood-state", ".pytest_cache", ".venv", "__pycache__"}
 
 
 class PluginTests(unittest.TestCase):
@@ -116,10 +117,30 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(receipt["baseline_tree"], {"file_count": 63, "canonical_tree_sha256": baseline["canonical_tree_sha256"], "status": "verified"})
 
     def test_no_marketplace_or_runtime_artifacts(self) -> None:
-        relative_paths = [path.relative_to(ROOT).as_posix() for path in ROOT.rglob("*") if path.is_file()]
+        relative_paths = [
+            path.relative_to(ROOT).as_posix()
+            for path in ROOT.rglob("*")
+            if path.is_file() and not (IGNORED_TREE_PARTS & set(path.relative_to(ROOT).parts))
+        ]
         self.assertFalse(any("marketplace" in path.casefold() for path in relative_paths))
         forbidden_suffixes = {".db", ".sqlite", ".gguf", ".env"}
         self.assertFalse(any(Path(path).suffix.casefold() in forbidden_suffixes for path in relative_paths))
+
+    def test_release_docs_are_generated_output(self) -> None:
+        self.assertIn("docs/", (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines())
+        source_docs = sorted(path.name for path in (ROOT / "release-docs").glob("*.md"))
+        self.assertEqual(
+            source_docs,
+            [
+                "acceptance.md",
+                "architecture.md",
+                "operations.md",
+                "post-v1-roadmap.md",
+                "project-atlas-frontend-pipeline.md",
+                "provenance.md",
+                "v1-closure.md",
+            ],
+        )
 
 
 if __name__ == "__main__":

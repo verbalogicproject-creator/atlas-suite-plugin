@@ -28,7 +28,7 @@ Keep this repository beside `deterministic-kg-rag-framework`, or set
 python3 scripts/dkg_bridge.py atlas plan --preset kg-rag
 ```
 
-See `docs/operations.md` for validation and controlled dogfood.
+See `release-docs/operations.md` for validation and controlled dogfood.
 
 ## Project Atlas frontend pipeline
 
@@ -43,18 +43,19 @@ The suite treats Project Atlas HTML as a two-stage product:
 holds editable display copy and markdown content. `project-atlas.css` owns
 visual refinement. The HTML shell exposes stable IDs and design comments so UI
 iteration can improve the frontend without touching authority-bearing data.
-See `docs/project-atlas-frontend-pipeline.md`.
+See `release-docs/project-atlas-frontend-pipeline.md`.
 
 ## Release status
 
-Version `1.0.0` is an uncommitted and uninstalled local source candidate, not a
-release. The [`v1 closure record`](docs/v1-closure.md) lists observed evidence,
+Version `1.0.0` is a committed source candidate. It is not installed,
+marketplace-published, deployed, or released. The
+[`v1 closure record`](release-docs/v1-closure.md) lists observed evidence,
 paired final-byte gates, artifact-manifest procedure, and protected-effect
 boundary. See the [`changelog`](CHANGELOG.md) for candidate contents.
 
 ## After v1
 
-The [plugin post-v1 roadmap](docs/post-v1-roadmap.md) covers private install
+The [plugin post-v1 roadmap](release-docs/post-v1-roadmap.md) covers private install
 dogfood, the separate lightweight public Project Atlas skill, maintained
 private-suite evolution, and later read-only managed/mobile interfaces. It
 defers to the paired framework roadmap for system architecture and phase gates.

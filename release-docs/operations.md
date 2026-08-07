@@ -5,12 +5,14 @@
 From the plugin root:
 
 ```sh
+python3 scripts/generate_release_docs.py
+python3 scripts/generate_release_docs.py --check
 python3 skills/kg-rag-specialist/scripts/validate_deterministic_kb.py
 PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s tests -v
 ```
 
 Also run the plugin manifest validator and the skill-creator quick validator
-from their installed development-tool locations against each of the six
+from their installed development-tool locations against each of the seven
 repository-relative skill directories. Record the exact validator identities
 and outputs in the closure evidence; do not encode a device-specific path in
 this repository.

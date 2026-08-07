@@ -25,7 +25,7 @@ deterministic compiler owns `project-atlas.json`, `content.json`,
 `atlas-frontend-designer` server may refine only editable content and CSS
 presentation surfaces. It must not mutate `project-atlas.json`, protected HTML
 IDs, source digests, proof limits, schema markers, or authority-bearing data.
-The detailed contract is in `docs/project-atlas-frontend-pipeline.md`.
+The detailed contract is in `release-docs/project-atlas-frontend-pipeline.md`.
 
 Each Atlas skill defaults to its single exact flag. Presets may be used only
 when the user requested the complete visible combination. No skill silently

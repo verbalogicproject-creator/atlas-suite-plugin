@@ -2,11 +2,11 @@
 
 ## Status and governing identities
 
-Version `1.0.0` is locally release-ready source. It is not committed,
-installed, published, deployed, or released. This conclusion is bound to both
-verified `ARTIFACTS.sha256` inventories, the paired final-byte gates below,
-and the independent closure verdict for those exact bytes. Any byte change
-invalidates the conclusion.
+Version `1.0.0` is locally release-ready source. It is committed and pushed as
+a source candidate, but it is not installed, marketplace-published, deployed,
+or released. This conclusion is bound to both verified `ARTIFACTS.sha256`
+inventories, the paired final-byte gates below, and the independent closure
+verdict for those exact bytes. Any byte change invalidates the conclusion.
 
 The approved local workflow is bound to:
 
@@ -75,6 +75,8 @@ Keep this repository beside the paired framework. From the plugin root on the
 exact final bytes:
 
 ```sh
+python3 scripts/generate_release_docs.py
+python3 scripts/generate_release_docs.py --check
 PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s tests -v
 PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS=error::ResourceWarning python3 skills/kg-rag-specialist/scripts/validate_deterministic_kb.py
 python3 scripts/dkg_bridge.py atlas plan --preset release-review
@@ -94,14 +96,15 @@ and `quick_validate.py` digest
 
 ## Artifact-manifest procedure
 
-After every source and documentation edit stops, generate
-`ARTIFACTS.sha256` from repository-relative regular files, excluding `.git`,
-caches, virtual environments, build output, and the manifest itself. Use
-bytewise path ordering and SHA-256. Review for unexpected or sensitive files,
-then run `sha256sum --check ARTIFACTS.sha256`. Verify the paired framework
-manifest in the same closure run. Record a commit only if separately approved;
-otherwise commit identity is unavailable for the uncommitted tree. Any later
-byte change invalidates the manifest and closure.
+After every source and documentation edit stops, regenerate release docs with
+`python3 scripts/generate_release_docs.py`, then generate `ARTIFACTS.sha256`
+from repository-relative regular source files, excluding `.git`, ignored
+generated docs, caches, virtual environments, build output, and the manifest
+itself. Use bytewise path ordering and SHA-256. Review for unexpected or
+sensitive files, then run `sha256sum --check ARTIFACTS.sha256`. Verify the
+paired framework manifest in the same closure run. Commit, push, installation,
+or publication remain separate protected effects. Any later byte change
+invalidates the manifest and closure.
 
 ## Recovery and protected effects
 
