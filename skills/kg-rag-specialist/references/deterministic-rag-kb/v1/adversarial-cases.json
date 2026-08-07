@@ -1,0 +1,22 @@
+{
+  "schema": "atlas-suite-adversarial-cases/1.0",
+  "cases": [
+    {"id":"ambiguous-alias","expected":"quarantine-all-candidates"},
+    {"id":"connector-truncation","expected":"reject-no-retry"},
+    {"id":"contradictory-claims","expected":"preserve-both-disclose"},
+    {"id":"duplicate-atlas-flag","expected":"reject"},
+    {"id":"generated-new-number","expected":"reject-answer"},
+    {"id":"invalid-repair-output","expected":"return-plan-or-abstain"},
+    {"id":"malformed-manifest","expected":"reject"},
+    {"id":"model-unavailable","expected":"explicit-degraded-or-fail-required"},
+    {"id":"path-traversal","expected":"reject"},
+    {"id":"prompt-injection","expected":"pre-retrieval-refuse"},
+    {"id":"protected-effect","expected":"pre-retrieval-refuse"},
+    {"id":"source-collision","expected":"reject-or-explicit-alias"},
+    {"id":"source-removal","expected":"tombstone-and-invalidate"},
+    {"id":"stale-active-snapshot","expected":"reject"},
+    {"id":"unknown-query","expected":"abstain"},
+    {"id":"unresolved-citation","expected":"reject-answer"}
+  ],
+  "proof_limit": "Blueprint regression cases; runtime evidence requires the paired DKG fixture and Harness Boot."
+}

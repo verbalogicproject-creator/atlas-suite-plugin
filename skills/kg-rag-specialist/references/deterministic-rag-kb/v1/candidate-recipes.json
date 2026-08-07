@@ -1,0 +1,13 @@
+{
+  "schema": "atlas-suite-candidate-recipes/1.0",
+  "controlling_registry": "../../kg-rag/workspace/kg-rag/recipe-registry.json",
+  "controlling_recipe_count": 18,
+  "candidates": [
+    {"id":"deterministic-graph-aggregate","status":"candidate","reason":"Replace generated community summaries with source-grounded partitions and aggregates."},
+    {"id":"answer-plan-validation","status":"candidate","reason":"Bind every factual sentence to declared plan claims and citations."},
+    {"id":"exact-revision-promotion","status":"candidate","reason":"Separate acquisition approval, staged diff approval, atomic activation, tombstone simulation, and rollback."},
+    {"id":"atlas-specific-contextual-facets","status":"research-only","reason":"Require an Atlas-specific schema and held-out ablation before cosine retrieval."}
+  ],
+  "activation": "forbidden-until-cookbook-schema-revision",
+  "proof_limit": "Candidates do not amend the controlling 18 recipes."
+}

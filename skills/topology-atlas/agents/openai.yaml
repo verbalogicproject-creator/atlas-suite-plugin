@@ -1,0 +1,4 @@
+interface:
+  display_name: "Topology Atlas"
+  short_description: "Map dependencies, workflows, and impact paths."
+  default_prompt: "Use $topology-atlas to build or inspect deterministic topology and impact paths."

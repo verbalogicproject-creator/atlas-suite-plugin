@@ -1,0 +1,1 @@
+{"required_shapes":["record-has-source","claim-has-provenance","edge-endpoints-resolve","evidence-has-citation"],"schema":"kg-rag-shapes-plan/1.0","severity_policy":{"violation":"blocked","warning":"degraded"},"version":"0.1.0"}

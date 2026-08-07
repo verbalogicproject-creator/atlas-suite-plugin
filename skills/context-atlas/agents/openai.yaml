@@ -1,0 +1,4 @@
+interface:
+  display_name: "Context Atlas"
+  short_description: "Maintain cited task context, drift, and handoffs."
+  default_prompt: "Use $context-atlas to build or inspect bounded task context and handoff state."

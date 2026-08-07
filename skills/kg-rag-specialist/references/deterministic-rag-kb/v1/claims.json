@@ -1,0 +1,30 @@
+{
+  "schema": "atlas-suite-deterministic-rag-kb/1.0",
+  "release_id": "deterministic-rag-kb-v1",
+  "sources": [
+    {"id":"dkg-plan","locator":"human-approved://dkg-framework-five-atlas-suite-v1","standing":"authoritative-plan","license":"user-owned","body_retained":false},
+    {"id":"project-atlas-runtime","locator":"repository://portfolio-repo-tool-to-video/packages/atlas-core","standing":"qualified-local-donor","license":"Apache-2.0-authorized","body_retained":false},
+    {"id":"project-atlas-evidence","locator":"repository://portfolio-repo-tool-to-video/docs/evidence","standing":"observed-local-evidence","license":"repository-owned","body_retained":false},
+    {"id":"contextual-methodology","locator":"donor://nlke-contextual-embeddings","standing":"quarantined-methodology","license":"Apache-2.0-authorized","body_retained":false},
+    {"id":"wikidata-target","locator":"wikidata://Q121362277@2506137297","standing":"approved-target-not-captured-by-this-release","license":"CC0-1.0","body_retained":false}
+  ],
+  "claims": [
+    {"id":"c01","text":"Canonical JSON and JSONL are authoritative; SQLite is a rebuildable projection.","source_ids":["dkg-plan"],"state":"validated","limitation":"Framework invariants do not prove external backup durability."},
+    {"id":"c02","text":"Each Atlas requires an isolated SQLite projection and its own receipt.","source_ids":["dkg-plan"],"state":"validated","limitation":"One Termux writer is the v1 deployment boundary."},
+    {"id":"c03","text":"Exact flags never silently execute unrequested Atlases.","source_ids":["dkg-plan"],"state":"validated","limitation":"Presets are explicit shorthand and must resolve visibly."},
+    {"id":"c04","text":"Deterministic fusion uses reciprocal rank fusion with k=60 and stable-ID tie breaking.","source_ids":["dkg-plan","project-atlas-runtime"],"state":"observed","limitation":"RRF quality remains corpus-specific."},
+    {"id":"c05","text":"Unknown evidence abstains and protected-effect or injection requests refuse before retrieval.","source_ids":["dkg-plan","project-atlas-evidence"],"state":"observed","limitation":"Pattern gates are a bounded layer, not a complete security system."},
+    {"id":"c06","text":"Global retrieval uses deterministic graph aggregates rather than generated community summaries.","source_ids":["dkg-plan"],"state":"validated","limitation":"Aggregate usefulness requires held-out path evaluation."},
+    {"id":"c07","text":"Semantic retrieval and BGE reranking remain opt-in until v2 qualification passes.","source_ids":["dkg-plan","project-atlas-evidence"],"state":"observed","limitation":"The earlier local model replays failed a frozen Top-3 recall gate."},
+    {"id":"c08","text":"Qwen embedding observations are historical ablations, not defaults.","source_ids":["dkg-plan","project-atlas-evidence"],"state":"observed","limitation":"Historical metrics are not general model rankings."},
+    {"id":"c09","text":"Model-proposed aliases remain quarantined until deterministic or human validation.","source_ids":["dkg-plan"],"state":"validated","limitation":"No automatic alias promotion route is qualified."},
+    {"id":"c10","text":"Evidence maturity is distinct from document or source authority.","source_ids":["dkg-plan","contextual-methodology"],"state":"validated","limitation":"Numeric contextual vectors are non-governing and inactive."},
+    {"id":"c11","text":"Generation consumes only a deterministic answer plan and must declare plan-claim and citation IDs per factual sentence.","source_ids":["dkg-plan"],"state":"validated","limitation":"Local model quality and latency remain separately unqualified."},
+    {"id":"c12","text":"One constrained generation repair is permitted; otherwise return the answer plan or abstention.","source_ids":["dkg-plan"],"state":"validated","limitation":"A repair call remains within the same memory and p95 ceilings."},
+    {"id":"c13","text":"Live acquisition and active promotion are separate digest-bound approvals.","source_ids":["dkg-plan","wikidata-target"],"state":"validated","limitation":"This KB performs neither effect."},
+    {"id":"c14","text":"Source deletion invalidates transformations, chunks, facets, graphs, indexes, rerank caches, answer plans, and answers.","source_ids":["dkg-plan","project-atlas-runtime"],"state":"observed","limitation":"Every consumer must enforce stale-state rejection."},
+    {"id":"c15","text":"A hash-chained receipt journal is tamper-evident but not externally notarized.","source_ids":["dkg-plan"],"state":"validated","limitation":"An operator controlling all storage can rewrite an unanchored history."},
+    {"id":"c16","text":"MCP or retrieved context never grants command or protected-effect authority.","source_ids":["dkg-plan","project-atlas-evidence"],"state":"observed","limitation":"Host approval enforcement remains outside the evidence graph."}
+  ],
+  "proof_limit": "Curated source-ledgered design and local observations; not live source truth, model qualification, cloud readiness, or effect authority."
+}

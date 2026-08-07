@@ -1,0 +1,16 @@
+{
+  "schema": "atlas-suite-kb-harness-boot/1.0",
+  "release_id": "deterministic-rag-kb-v1",
+  "qualification_scope": "blueprint",
+  "checks": [
+    {"id":"adversarial-cases","status":"passed"},
+    {"id":"baseline-cookbook-unchanged","status":"passed"},
+    {"id":"candidate-recipes-separated","status":"passed"},
+    {"id":"connector-default-disabled","status":"passed"},
+    {"id":"model-observations-bounded","status":"passed"},
+    {"id":"private-bodies-excluded","status":"passed"},
+    {"id":"source-ledger-present","status":"passed"}
+  ],
+  "verdict": "ready",
+  "proof_limit": "Blueprint-scoped deterministic KB completeness only; not runtime readiness, live retrieval quality, model quality, connector execution, promotion, installation, or effect authority."
+}

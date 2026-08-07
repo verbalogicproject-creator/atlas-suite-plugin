@@ -1,0 +1,4 @@
+interface:
+  display_name: "Atlas Frontend Designer"
+  short_description: "Refine Atlas content and CSS without touching source truth."
+  default_prompt: "Use $atlas-frontend-designer to improve Project Atlas frontend presentation while preserving protected canonical artifacts."

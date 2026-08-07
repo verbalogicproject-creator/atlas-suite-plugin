@@ -1,0 +1,98 @@
+---
+name: atlas-frontend-designer
+description: Refine Project Atlas frontend presentation from deterministic artifacts by editing only content.json and project-atlas.css, using Atlas-specific Taste rules, markdown rendering, and protected-surface validation.
+---
+
+# Atlas Frontend Designer
+
+Atlas Frontend Designer is the visual/UI stage for Project Atlas Suite. It is
+derived from Taste frontend discipline, but it targets dense, verifiable
+knowledge manuals rather than marketing pages.
+
+Use this skill only after a deterministic compiler has emitted:
+
+- `project-atlas.json`
+- `content.json`
+- `project-atlas.css`
+- `project-atlas.html`
+- a compiler receipt
+
+## Dots
+
+Literal task: refine the Project Atlas frontend experience.
+
+Strategic intent: improve readability, navigation, markdown rendering,
+interactive inspection, and visual polish without weakening deterministic
+authority.
+
+Boundaries: edit only `content.json` presentation fields and
+`project-atlas.css` unless the user separately approves a compiler/template
+change. Do not edit `project-atlas.json`, source digests, proof limits,
+canonical IDs, protected HTML IDs, contract comments, or receipts.
+
+Task type: presentation-layer feature work over an architecture-bound pipeline.
+
+Relevant principles: source truth is separate from display content; server
+preview is optional; static offline output must continue to validate; model
+output never grants authority.
+
+## Points
+
+1. Inspect the deterministic receipt and artifact digests.
+2. Read `references/contract.md` and the shell comments before planning edits.
+3. Declare the design read in one sentence: audience, information density,
+   visual language, and interaction level.
+4. Propose edits as two surfaces only: `content.json` and
+   `project-atlas.css`.
+5. Use markdown renderer output as presentation only. Never promote rendered
+   markdown to evidence or source truth.
+6. Preserve all protected IDs, anchors, source labels, proof-limit labels, and
+   citation affordances.
+7. Run protected-surface validation before reporting success.
+
+## Design Rules
+
+- Favor a quiet, information-rich owner manual over a landing-page hero.
+- Make claims, evidence, proof limits, current state, and next actions easy to
+  scan.
+- Use stable navigation, source panes, filters, search affordances, and
+  section-local actions where the shell supports them.
+- Avoid decorative cards inside cards. Use tables, split panes, sidebars,
+  accordions, tabs, and dense lists when they serve repeated inspection.
+- Keep typography compact and legible. Do not use hero-scale type inside
+  panels, sidebars, or data rows.
+- Use one accent system and one radius system.
+- Avoid generic AI-purple gradients, decorative status dots, fake screenshots,
+  scroll cues, version-label decoration, and invented metrics.
+- Motion must explain state, hierarchy, or navigation. Respect reduced motion.
+- CSS must not import remote resources, reference device paths, or hide
+  evidence/proof-limit content.
+
+## Markdown Renderer Boundary
+
+The markdown renderer is an adapter. During local development it may be backed
+by a device-local renderer, but artifacts record only logical adapter identity
+and digests. Absolute paths such as Android storage paths must not be emitted
+into `content.json`, CSS, HTML, receipts, or docs.
+
+Rendered markdown is a view over `content.json` or digest-pinned source
+content. It cannot create claims, change evidence, approve actions, or replace
+the compiler ledger.
+
+## Validation
+
+Before returning success, prove:
+
+- `project-atlas.json` digest is unchanged from the compiler receipt.
+- protected HTML IDs, comments, anchors, and data block IDs are unchanged.
+- source digests, proof limits, canonical IDs, and schema markers are
+  unchanged.
+- `content.json` contains no new authority state, external-effect approval,
+  source digest, or canonical claim.
+- `project-atlas.css` has no remote imports, no device-specific absolute
+  paths, no hidden proof-limit content, and no contrast regressions in core
+  views.
+- the static HTML fallback still opens without the designer server.
+
+If any check fails, report the failing surface and stop. Do not repair by
+editing authority-bearing files unless the user gives a new exact approval.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "KG-RAG Specialist"
+  short_description: "Build and qualify a grounded KG-RAG blueprint"
+  default_prompt: "Use $kg-rag-specialist to produce a grounded KG-RAG blueprint and Harness Boot receipt."

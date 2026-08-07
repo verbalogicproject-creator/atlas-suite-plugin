@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence-Rules Atlas"
+  short_description: "Govern source standing, lifecycle, and receipts."
+  default_prompt: "Use $evidence-rules-atlas to inspect or apply source and evidence governance."

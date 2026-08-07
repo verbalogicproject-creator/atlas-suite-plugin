@@ -1,0 +1,1 @@
+{"classes":["Source","Record","Chunk","Entity","Claim","EvidencePacket"],"contradiction_policy":"preserve-both-claims-and-lineage","identity_policy":"stable-source-scoped-identifiers-with-explicit-equivalence","relations":["contains","mentions","asserts","supports","contradicts","derivedFrom"],"schema":"kg-rag-ontology-plan/1.0","version":"0.1.0"}

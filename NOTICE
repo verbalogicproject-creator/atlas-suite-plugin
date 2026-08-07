@@ -1,0 +1,8 @@
+Atlas Suite Plugin
+Copyright 2026 Atlas Suite contributors
+
+The KG-RAG Specialist includes an unmodified reference baseline copied from
+the installed in-the-loop plugin version 0.4.1. Baseline identities and
+digests are recorded in skills/kg-rag-specialist/references/baseline-manifest.json.
+The upgraded deterministic-RAG knowledge release is maintained separately and
+does not alter the controlling 18-recipe baseline cookbook.

@@ -1,0 +1,24 @@
+{
+  "binding": "codex",
+  "capabilities": {
+    "architect": {"kind": "atomic", "fallback": "default", "profiles": {"portable": {"model": "inherited", "reasoning": "high", "sandbox": "read-only"}, "production": {"model": "gpt-5.6-sol", "reasoning": "high", "sandbox": "read-only"}}},
+    "operator": {"kind": "atomic", "fallback": "worker", "profiles": {"portable": {"model": "inherited", "reasoning": "medium", "sandbox": "workspace-write"}, "production": {"model": "gpt-5.6-terra", "reasoning": "medium", "sandbox": "workspace-write"}}},
+    "analyst": {"kind": "atomic", "fallback": "default", "profiles": {"portable": {"model": "inherited", "reasoning": "low", "sandbox": "read-only"}, "production": {"model": "gpt-5.6-luna", "reasoning": "low", "sandbox": "read-only"}}},
+    "sprinter": {"kind": "atomic", "fallback": "operator", "profiles": {"portable": {"model": "inherited", "reasoning": "medium", "sandbox": "workspace-write"}, "production": {"model": "gpt-5.3-codex-spark", "reasoning": "medium", "sandbox": "workspace-write", "fallback_model": "gpt-5.6-terra"}}},
+    "planner": {"kind": "atomic", "fallback": "default", "profiles": {"portable": {"model": "gpt-5.6-sol", "reasoning": "xhigh", "sandbox": "read-only"}, "production": {"model": "gpt-5.6-sol", "reasoning": "xhigh", "sandbox": "read-only"}}},
+    "frontend_designer": {"kind": "atomic", "fallback": "operator", "profiles": {"portable": {"model": "gpt-5.6-terra", "reasoning": "medium", "sandbox": "workspace-write"}, "production": {"model": "gpt-5.6-terra", "reasoning": "medium", "sandbox": "workspace-write"}}},
+    "explorer": {"kind": "atomic", "native": true},
+    "worker": {"kind": "atomic", "native": true},
+    "default": {"kind": "atomic", "native": true},
+    "production_auditor": {"kind": "composite", "workflow": "workflows/production-auditor.itl.md", "entry_skill": "production-auditor", "required_roles": ["explorer", "analyst", "architect", "operator"], "fallback": "architect", "version": "1.0.0"},
+    "repo_factory": {"kind": "composite", "workflow": "workflows/repo-factory.itl.md", "entry_skill": "repo-factory", "required_roles": ["planner", "architect", "operator"], "fallback": "operator", "version": "1.0.0"},
+    "taste_frontend_studio": {"kind": "composite", "workflow": "workflows/taste-frontend-studio.itl.md", "entry_skill": "taste-frontend-studio", "required_roles": ["explorer", "frontend_designer", "operator", "architect"], "fallback": "frontend_designer", "version": "1.0.0"},
+    "kg_rag_specialist": {"kind": "composite", "workflow": "workflows/kg-rag-specialist.itl.md", "entry_skill": "kg-rag-specialist", "required_roles": ["analyst", "architect", "operator"], "fallback": "architect", "version": "1.0.0"}
+  },
+  "format": "itl-codex-roster/1.0",
+  "profiles": {
+    "portable": {"description": "Model-portable core roster with pinned planner and frontend exceptions."},
+    "production": {"description": "Optimized Sol, Terra, Luna, and Spark production bindings."}
+  },
+  "version": "0.4.1"
+}

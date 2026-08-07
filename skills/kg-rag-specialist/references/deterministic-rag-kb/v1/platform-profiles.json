@@ -1,0 +1,13 @@
+{
+  "schema": "atlas-suite-platform-profiles/1.0",
+  "profiles": [
+    {"id":"local-deterministic","default":true,"channels":["lexical","graph-local","graph-aggregate"],"writers":"one-termux-writer","network":"forbidden","models":"not-required","status":"built"},
+    {"id":"atlas-suite-plugin","default":false,"channels":["paired-dkg-cli"],"writers":"delegated-to-dkg","network":"forbidden","models":"not-required","status":"built"},
+    {"id":"semantic-embeddinggemma","default":false,"channels":["semantic"],"writers":"isolated-cache-only","network":"loopback-only","models":"EmbeddingGemma Q4_0","status":"historical-replay-failed-frozen-recall-gate"},
+    {"id":"semantic-bge-rerank","default":false,"channels":["semantic","reranker"],"writers":"isolated-cache-only","network":"loopback-only","models":"EmbeddingGemma Q4_0 plus BGE reranker Q8_0","status":"historical-replay-regressed-top3-recall"},
+    {"id":"qwen-ablation","default":false,"channels":["semantic","optional-reranker"],"writers":"isolated-cache-only","network":"loopback-only","models":"Qwen3 Embedding historical ablation","status":"historical-only"},
+    {"id":"wikidata-exact-revision","default":false,"channels":["connector"],"writers":"candidate-staging-then-atomic-promotion","network":"fresh-digest-bound-approval","models":"forbidden","status":"disabled"},
+    {"id":"local-generation","default":false,"channels":["answer-plan-consumer"],"writers":"receipt-only","network":"human-served-loopback-8143","models":"Gemma 3 4B, Qwen 3.5 4B, or Phi-4 Mini exact GGUF","status":"unbound-pending-preflight"}
+  ],
+  "proof_limit": "Profile declarations and historical observations; unavailable adapters remain unavailable and no profile is activated here."
+}

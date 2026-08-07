@@ -1,0 +1,4 @@
+interface:
+  display_name: "Knowledge Atlas"
+  short_description: "Build governed claims, relations, and evidence packets."
+  default_prompt: "Use $knowledge-atlas to build or query governed knowledge and evidence."

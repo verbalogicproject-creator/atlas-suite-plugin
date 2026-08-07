@@ -1,0 +1,17 @@
+{
+  "schema": "atlas-suite-specialist-baseline/1.0",
+  "source": "installed-plugin-cache://in-the-loop/0.4.1/skills/kg-rag-specialist",
+  "file_count_excluding_pycache": 63,
+  "canonical_tree_sha256": "685dcc96809621c97a3b3f0f4a4ba18692ad1b3de8657452b33acf05470dc72a",
+  "identities": {
+    "SKILL.md": "02c408552747c80bb0256abd3094f3eca38d7f618e5e79931b42030034a5fd81",
+    "references/kg-rag/workspace/spec/kg-rag-cookbook.md": "2015bc3f30acfb6665745ab9d2598d24c590b00f465d33298ac0508331aca308",
+    "references/kg-rag/workspace/kg-rag/recipe-registry.json": "eec6c909651b6011ac78b594d36fce03044607667274436d2fcde280a900e223"
+  },
+  "copy_layout": {
+    "original_skill_and_agent_metadata": "references/baseline-package/",
+    "original_references": "references/kg-rag/ and references/binding/",
+    "original_scripts": "scripts/"
+  },
+  "comparison_policy": "The original installed cache remains untouched. Atlas Suite changes the active skill instructions but preserves the exact baseline package for comparison and keeps its cookbook/recipe registry controlling."
+}

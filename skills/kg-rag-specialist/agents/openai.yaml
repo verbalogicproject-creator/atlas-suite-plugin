@@ -1,0 +1,4 @@
+interface:
+  display_name: "KG-RAG Specialist"
+  short_description: "Design and validate governed KG-RAG blueprints."
+  default_prompt: "Use $kg-rag-specialist to produce a source-grounded deterministic KG-RAG blueprint."

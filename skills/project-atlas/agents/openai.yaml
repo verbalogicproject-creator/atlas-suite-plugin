@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Atlas"
+  short_description: "Build Project snapshots, summaries, and proof boundaries."
+  default_prompt: "Use $project-atlas to build or inspect the requested Project Atlas projection."
