@@ -35,6 +35,13 @@ The same entry point remains scriptable. Build a complete hub with
 `./scripts/atlas atlas build --source . --state-root .atlas-state --output
 project-atlas-site`.
 
+Mine repository structure or inspect API declarations without a model:
+
+```sh
+./scripts/atlas domain mine --source . --pack ../deterministic-kg-rag-framework/config/domain-packs/repository-architecture-v1.json --output domain-projection
+./scripts/atlas domain api-schema --source . --output api-schema.json
+```
+
 See `release-docs/operations.md` for validation and controlled dogfood.
 
 ## Project Atlas frontend pipeline
@@ -55,15 +62,16 @@ See `release-docs/project-atlas-frontend-pipeline.md`.
 
 ## Release status
 
-Version `1.0.0` is an uncommitted local source candidate. It is not installed,
+Version `1.0.1` is the current local source candidate paired with framework
+`0.2.0`. It is not installed,
 marketplace-published, deployed, or released. The
 [`v1 closure record`](release-docs/v1-closure.md) lists observed evidence,
 paired final-byte gates, artifact-manifest procedure, and protected-effect
 boundary. See the [`changelog`](CHANGELOG.md) for candidate contents.
 
-## After v1
+## After v1.0.1
 
-The [plugin post-v1 roadmap](release-docs/post-v1-roadmap.md) covers private install
-dogfood, the separate lightweight public Project Atlas skill, maintained
-private-suite evolution, and later read-only managed/mobile interfaces. It
-defers to the paired framework roadmap for system architecture and phase gates.
+The [plugin roadmap](release-docs/post-v1-roadmap.md) defines the post-`v1.0.1`
+continuity, capability-contract, project-memory, and optional Command Center
+tracks. It defers to the paired framework roadmap for stable system contracts
+and phase gates.

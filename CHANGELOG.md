@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.1 - framework v0.2 companion candidate
+
+Status: local source candidate; not installed, published, deployed, or
+released.
+
+### Added
+
+- Closed bridge validation against `dkg-framework-interface/1.0`,
+  `dkg-cli/1.0`, and the required v0.2 capability set before importing code.
+- Menu access to repository-domain mining and API-schema inspection.
+- Scriptable parity coverage for the generalized domain pack and signed JSON
+  OpenAPI/JSON Schema projection.
+- Project Atlas integration for source-anchored API declarations while
+  retaining the exact four-file public bundle.
+- A post-v1.0.1 roadmap separating bounded continuity context, capability
+  contracts, project-memory projections, and optional Command Center adapters.
+
+### Proof boundary
+
+- The plugin remains a thin provider-neutral bridge and skill bundle; the
+  paired framework is the only execution engine and contract resolver.
+- Domain registration/activation, model use, installation, marketplace
+  mutation, publication, and deployment are not performed.
+
 ## 1.0.0 — local source candidate
 
 Status: local source candidate; not committed, installed, published,

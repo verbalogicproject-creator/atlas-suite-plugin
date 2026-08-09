@@ -23,12 +23,13 @@ generation, installation, or external effects.
 
 ## Framework compatibility
 
-Atlas Suite v1 targets deterministic-kg-rag-framework `1.x` and its versioned
-`dkg-*` contracts. The bridge uses the framework itself; it does not translate
-contracts. Before importing framework code, the bridge reads paired repository
-metadata and rejects missing, unparseable, incorrectly named, or non-1.x
-frameworks. Legacy `project-atlas-*` reading is owned by the framework shim and
-is not duplicated in plugin prompts.
+Atlas Suite v1.0.1 targets deterministic-kg-rag-framework `0.2.0` and its
+versioned `dkg-*` contracts. The bridge uses the framework itself; it does not
+translate contracts. Before importing framework code, the bridge requires the
+exact framework version, Python `>=3.11`, `dkg-framework-interface/1.0`,
+`dkg-cli/1.0`, and the declared v0.2 capability set. Legacy
+`project-atlas-*` reading is owned by the framework shim and is not duplicated
+in plugin prompts.
 
 ## Frontend design skill source
 

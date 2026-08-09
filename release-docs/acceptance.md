@@ -19,6 +19,11 @@
   compiler-owned `index.html` for the agent map;
 - the public Atlas bundle has exactly four files and its build/rebind receipts
   remain under the state root;
+- the bridge validates the exact interface and required v0.2 capability set
+  before import, and direct/bridged domain-pack plus API-schema outputs are
+  byte-identical;
+- menu choices 9 and 10 expose repository-domain mining and declaration-only
+  API inspection without creating a second plugin engine;
 - held-out task routing passes its predeclared Recall@K, MRR, citation,
   token-cost, and repeatability thresholds;
 - plugin tests pass on the exact candidate;

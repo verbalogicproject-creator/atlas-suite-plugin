@@ -12,7 +12,7 @@ human decisions retain stronger authority.
 1. Read `references/contract.md`, repository instructions, Git state, manifests,
    architecture, commands, tests, evidence, and current-status documentation.
 2. Open the menu with `../../scripts/atlas`, or inspect commands with
-   `../../scripts/atlas menu --choice 7`.
+   `../../scripts/atlas menu --choice 8`.
 3. Build the combined five-Atlas hub only when a build is authorized:
    `../../scripts/atlas atlas build --source <root> --state-root <state> --output <bundle>`.
 4. Request bounded task context with
@@ -23,6 +23,11 @@ human decisions retain stronger authority.
    first for the concise map, then inspect selected source files in order.
 7. Report degraded capabilities, stale evidence, omitted context, and proof
    limits. Context chooses what to read; it does not grant authority.
+
+Use menu choice `9` or `domain mine` for a deterministic repository-domain
+projection. Use menu choice `10` or `domain api-schema` for declaration-only
+JSON OpenAPI and JSON Schema inspection. The compiled four-file hub includes
+that API projection inside `project-atlas.json`; it does not claim deployment.
 
 Use `atlas run --flags project` only for the isolated Project child snapshot.
 Source annotation remains preview-only until a separate exact approval names

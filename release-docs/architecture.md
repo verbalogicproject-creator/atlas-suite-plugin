@@ -19,6 +19,12 @@ with unchanged arguments. Therefore plugin and CLI plan/receipt semantics
 cannot drift through a second implementation. If the paired framework is not
 found, the plugin fails visibly and performs no fallback.
 
+Before import, the bridge validates the framework distribution/version pair,
+`dkg-framework-interface/1.0`, `dkg-cli/1.0`, and the required Atlas, domain,
+qualification, API-schema, and four-file capabilities. Domain mining, ranking,
+candidate validation, and API projection remain framework modules; the plugin
+adds only agent-facing skills, menu access, and parity tests.
+
 Project Atlas frontend generation is a two-stage pipeline. The deterministic
 compiler owns the exact four-file public bundle: `index.html`,
 `project-atlas.json`, `content.json`, and `design.css`; receipts and the compact
@@ -31,7 +37,9 @@ JSON, IDs, source digests, proof limits, schema markers, or authority data.
 
 `index.html` is an agent-first orientation map. It exposes bounded task routes,
 file reading order, selection reasons, estimated context cost, omissions, and
-the five-Atlas ledger. On-demand context ranking can select any indexed file,
+the five-Atlas ledger. Its canonical JSON also carries the declaration-only
+API-schema projection exposed in the HTML API Contracts section. On-demand
+context ranking can select any indexed file,
 including files omitted from the concise default routes.
 The detailed contract is in `release-docs/project-atlas-frontend-pipeline.md`.
 

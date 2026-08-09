@@ -28,6 +28,17 @@ compare stdout bytes. The plugin test suite exercises this invariant. For
 stateful dogfood, point both routes at the same isolated source and distinct
 state roots; compare plans, manifests, snapshots, receipts, and Harness Boot.
 
+Exercise the v0.2 companion capabilities through the same bridge:
+
+```sh
+./scripts/atlas menu --choice 9 --source . --pack ../deterministic-kg-rag-framework/config/domain-packs/repository-architecture-v1.json --domain-output domain-projection
+./scripts/atlas menu --choice 10 --source . --api-output api-schema.json
+```
+
+Choice 9 builds a local domain graph and non-activated receipt. Choice 10
+emits a signed declaration projection. Neither command calls a model, follows
+network references, or registers a candidate.
+
 ## Project Atlas frontend dogfood
 
 Treat the frontend pipeline as two protected stages:
@@ -51,7 +62,7 @@ protected HTML IDs, and contract comments are unchanged.
 
 Task-route qualification uses frozen relevance judgments, Recall@K, MRR,
 citation correctness, context-token cost, freshness, abstention, and exact
-repeatability. It does not use search-novelty comparisons.
+repeatability.
 
 ## Dogfood matrix
 
@@ -66,6 +77,8 @@ repeatability. It does not use search-novelty comparisons.
   invalid structured generation.
 - Four-file membership, same-input repeatability, task-route qualification,
   direct impact, annotation dry-run, and protected presentation rebind.
+- Domain-pack validation/mining, API-schema projection parity, and missing
+  required v0.2 capability refusal before framework import.
 - Plugin removal after a separately approved direct install.
 
 ## Installation boundary

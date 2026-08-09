@@ -2,9 +2,9 @@
 
 ## Status and governing identities
 
-Version `1.0.0` has a prior committed and pushed source candidate. The current
-working tree adds the agent-first Project Atlas implementation and must pass a
-new final-byte closure before it can be called locally release-ready. It is not
+Version `1.0.1` is the current local source candidate. It adds the agent-first
+Project Atlas implementation and the exact framework `0.2.0` companion
+contract. This record captures its final-byte closure evidence. It is not
 installed, marketplace-published, deployed, or released.
 
 The approved local workflow is bound to:
@@ -40,7 +40,7 @@ the plugin or authorize any other effect.
 
 ## Observed candidate evidence
 
-- Plugin unit discovery passed ten tests.
+- Plugin unit discovery passed 12 warning-strict tests.
 - Direct and bridged `atlas plan` output was byte-identical for representative
   flags and every preset exercised by the suite.
 - Seven manifest-declared skills were present; missing framework resolution
@@ -51,7 +51,7 @@ the plugin or authorize any other effect.
   requirement.
 - The source contained no install action or runtime database/model/environment
   artifacts.
-- The paired framework passed 45 warning-strict tests; its integrity,
+- The paired framework passed 57 warning-strict tests; its integrity,
   promotion-binding, and exact-text generation repairs are documented in its
   own `docs/v1-closure.md`.
 - The friendly entry point opened the menu without arguments, built an exact
@@ -63,8 +63,10 @@ the plugin or authorize any other effect.
   run-and-Boot comparisons.
 - Complete baseline reconstruction verifies 63 files against canonical tree
   digest `685dcc96809621c97a3b3f0f4a4ba18692ad1b3de8657452b33acf05470dc72a`.
-- The bridge refuses missing, unparseable, incorrectly named, or non-1.x
-  framework metadata before importing its CLI.
+- The initial v1.0.0 bridge refused missing, unparseable, incorrectly named, or
+  non-1.x framework metadata before importing its CLI. The v1.0.1 release
+  supersedes that historical policy with an exact framework `0.2.0`, Python
+  `>=3.11`, interface, CLI, and capability-set gate.
 
 Deterministic builds, backup/restore, rollback, and blocked acquisition
 preflight were rerun through the paired framework on the final candidate. The

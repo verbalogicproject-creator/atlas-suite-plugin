@@ -4,10 +4,19 @@
 from __future__ import annotations
 
 import os
-import re
+import json
 import sys
 import tomllib
 from pathlib import Path
+
+
+REQUIRED_CAPABILITIES = {
+    "api-schema-projection",
+    "atlas-five-core",
+    "domain-mining",
+    "domain-qualification",
+    "project-atlas-four-file",
+}
 
 
 def _framework_src() -> Path:
@@ -20,15 +29,41 @@ def _framework_src() -> Path:
     if not (source / "dkg" / "cli.py").is_file():
         raise SystemExit("atlas-suite: paired deterministic-kg-rag-framework was not found; set DKG_FRAMEWORK_ROOT")
     metadata_path = root / "pyproject.toml"
+    interface_path = root / "config" / "framework-interface.json"
     try:
         with metadata_path.open("rb") as handle:
             project = tomllib.load(handle)["project"]
         name = project["name"]
         version = project["version"]
-    except (OSError, KeyError, TypeError, tomllib.TOMLDecodeError) as exc:
+        python_requires = project["requires-python"]
+        interface = json.loads(interface_path.read_text(encoding="utf-8"))
+    except (OSError, KeyError, TypeError, ValueError, tomllib.TOMLDecodeError) as exc:
         raise SystemExit("atlas-suite: paired framework identity is missing or unparseable") from exc
-    if name != "deterministic-kg-rag-framework" or not isinstance(version, str) or re.fullmatch(r"1\.\d+\.\d+(?:(?:a|b|rc)\d+)?(?:\.post\d+)?(?:\.dev\d+)?", version) is None:
-        raise SystemExit("atlas-suite: paired framework must be deterministic-kg-rag-framework 1.x")
+    expected_interface = {
+        "schema", "distribution", "framework_version", "cli_contract",
+        "python_requires", "capabilities", "proof_limit",
+    }
+    compatible = (
+        name == "deterministic-kg-rag-framework"
+        and version == "0.2.0"
+        and python_requires == ">=3.11"
+        and sys.version_info >= (3, 11)
+        and isinstance(interface, dict)
+        and set(interface) == expected_interface
+        and interface["schema"] == "dkg-framework-interface/1.0"
+        and interface["distribution"] == name
+        and interface["framework_version"] == version
+        and interface["cli_contract"] == "dkg-cli/1.0"
+        and interface["python_requires"] == python_requires
+        and isinstance(interface["capabilities"], list)
+        and interface["capabilities"] == sorted(set(interface["capabilities"]))
+        and all(isinstance(item, str) and item for item in interface["capabilities"])
+    )
+    if not compatible:
+        raise SystemExit("atlas-suite: paired framework must be version 0.2.0 with Python >=3.11, dkg-framework-interface/1.0, and dkg-cli/1.0")
+    missing = sorted(REQUIRED_CAPABILITIES - set(interface["capabilities"]))
+    if missing:
+        raise SystemExit(f"atlas-suite: paired framework is missing required capabilities: {','.join(missing)}")
     return source
 
 
