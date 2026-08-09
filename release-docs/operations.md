@@ -32,17 +32,26 @@ state roots; compare plans, manifests, snapshots, receipts, and Harness Boot.
 
 Treat the frontend pipeline as two protected stages:
 
-1. Run the deterministic compiler and verify the emitted
-   `project-atlas.json`, `content.json`, `project-atlas.css`,
-   `project-atlas.html`, and receipt digests.
-2. Run `atlas-frontend-designer` only against a copy of `content.json` and
-   `project-atlas.css`.
+1. Run `./scripts/atlas atlas build --source . --state-root .atlas-state
+   --output project-atlas-site` and verify exactly `index.html`,
+   `project-atlas.json`, `content.json`, and `design.css`. The receipt remains
+   under `.atlas-state`.
+2. Query with `./scripts/atlas atlas context "<task>" --output
+   project-atlas-site --budget-tokens 1800`, then inspect selected source files
+   in order.
+3. Run `atlas-frontend-designer` only against copies of `content.json` and
+   `design.css`; pass proposals through `atlas rebind` into a new bundle.
+4. Validate with `./scripts/atlas atlas check --output <bundle>`.
 
 The designer server may use a local markdown-renderer adapter, but operations
 records must name the adapter by logical identity and digest. Do not record
 device-specific absolute paths in repository artifacts. Before accepting a
 designer result, validate that canonical JSON, source digests, proof limits,
 protected HTML IDs, and contract comments are unchanged.
+
+Task-route qualification uses frozen relevance judgments, Recall@K, MRR,
+citation correctness, context-token cost, freshness, abstention, and exact
+repeatability. It does not use search-novelty comparisons.
 
 ## Dogfood matrix
 
@@ -55,6 +64,8 @@ protected HTML IDs, and contract comments are unchanged.
 - Semantic/reranker requested while unavailable.
 - Injection, protected effect, unknown evidence, tombstone, contradiction, and
   invalid structured generation.
+- Four-file membership, same-input repeatability, task-route qualification,
+  direct impact, annotation dry-run, and protected presentation rebind.
 - Plugin removal after a separately approved direct install.
 
 ## Installation boundary

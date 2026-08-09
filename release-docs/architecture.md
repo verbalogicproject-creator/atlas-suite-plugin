@@ -19,12 +19,20 @@ with unchanged arguments. Therefore plugin and CLI plan/receipt semantics
 cannot drift through a second implementation. If the paired framework is not
 found, the plugin fails visibly and performs no fallback.
 
-Project Atlas frontend generation is a separate two-stage pipeline. The
-deterministic compiler owns `project-atlas.json`, `content.json`,
-`project-atlas.css`, `project-atlas.html`, and the output receipt. The optional
-`atlas-frontend-designer` server may refine only editable content and CSS
-presentation surfaces. It must not mutate `project-atlas.json`, protected HTML
-IDs, source digests, proof limits, schema markers, or authority-bearing data.
+Project Atlas frontend generation is a two-stage pipeline. The deterministic
+compiler owns the exact four-file public bundle: `index.html`,
+`project-atlas.json`, `content.json`, and `design.css`; receipts and the compact
+context map remain under the external state root. Validated `design.css` bytes
+are embedded and digest-bound in `index.html` so Android `content://` and
+offline direct-file opening retain the complete visual design. The optional
+`atlas-frontend-designer` proposes only editable content and CSS presentation.
+Deterministic rebind regenerates `index.html` and rejects changes to canonical
+JSON, IDs, source digests, proof limits, schema markers, or authority data.
+
+`index.html` is an agent-first orientation map. It exposes bounded task routes,
+file reading order, selection reasons, estimated context cost, omissions, and
+the five-Atlas ledger. On-demand context ranking can select any indexed file,
+including files omitted from the concise default routes.
 The detailed contract is in `release-docs/project-atlas-frontend-pipeline.md`.
 
 Each Atlas skill defaults to its single exact flag. Presets may be used only

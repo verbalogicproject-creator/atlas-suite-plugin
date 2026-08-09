@@ -1,12 +1,23 @@
 # Project Atlas contract
 
-- Flag: `project`
-- Snapshot: `dkg-atlas-snapshot/1.0`
-- Projection: isolated read-only-query SQLite; canonical JSON is authoritative
-- Facet: `role` (`component`, `command`, `documentation`, `test`, `fixture`, `configuration`)
-- Output: inventory records, human summary, child receipt, composite membership
-- Proof limit: owner orientation and status projection; not completion or effect authority
+- Child flag: `project`
+- Combined build: all five children through the exact `release-review` preset
+- Child snapshot: `dkg-atlas-snapshot/1.0`
+- Public Atlas: `dkg-project-atlas/1.0`
+- Content: `dkg-project-atlas-content/1.0`
+- HTML: `dkg-project-atlas-html/1.0`
+- Internal compact map: `dkg-ctx/1.0`, stored under the state root
+- Projection: isolated SQLite for queries; canonical JSON remains authoritative
+- Dimension authority: derived and non-governing; agent enrichment is inactive
+  until held-out qualification passes
 
-V1 ships the canonical snapshot and Markdown summary, not an HTML renderer. Any
-later HTML renderer must remain a presentation over the Project snapshot.
-Legacy `project-atlas-*` readers remain read-only during migration.
+The public bundle contains exactly `index.html`, `project-atlas.json`,
+`content.json`, and `design.css`. Build and rebind receipts remain under the
+state root and never become a fifth public file. `index.html` is the concise
+agent map; routes name source files, reading order, reasons, estimated context
+cost, freshness, and omissions.
+
+The bundle excludes credentials, private bodies, absolute device paths,
+runtime caches, external scripts, and remote CSS. Context selection and impact
+relations are deterministic projections, not completion proof or effect
+authority. Legacy `project-atlas-*` readers remain read-only during migration.

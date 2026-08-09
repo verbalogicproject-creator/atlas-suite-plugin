@@ -1,7 +1,7 @@
 # Atlas Suite Plugin
 
 Atlas Suite is a thin Apache-2.0 Codex plugin for the five deterministic DKG
-Atlases, an upgraded KG-RAG Specialist, and the planned Project Atlas frontend
+Atlases, an upgraded KG-RAG Specialist, and an agent-first Project Atlas frontend
 pipeline. It contains no database engine and does not fork the DKG contracts.
 `scripts/dkg_bridge.py` resolves the paired `deterministic-kg-rag-framework`
 and invokes its exact CLI/resolver.
@@ -14,6 +14,7 @@ Skills:
 - `atlas-suite-plugin:topology-atlas`
 - `atlas-suite-plugin:evidence-rules-atlas`
 - `atlas-suite-plugin:kg-rag-specialist`
+- `atlas-suite-plugin:atlas-frontend-designer`
 
 The plugin is intentionally not installed. It includes a provider-neutral
 Claude Code marketplace descriptor under `marketplace/claude-code/` for
@@ -24,11 +25,15 @@ user-approved effects.
 ## Paired local use
 
 Keep this repository beside `deterministic-kg-rag-framework`, or set
-`DKG_FRAMEWORK_ROOT` to its root. Preview a plan without writing:
+`DKG_FRAMEWORK_ROOT` to its root. Open the menu:
 
 ```sh
-python3 scripts/dkg_bridge.py atlas plan --preset kg-rag
+./scripts/atlas
 ```
+
+The same entry point remains scriptable. Build a complete hub with
+`./scripts/atlas atlas build --source . --state-root .atlas-state --output
+project-atlas-site`.
 
 See `release-docs/operations.md` for validation and controlled dogfood.
 
@@ -36,20 +41,21 @@ See `release-docs/operations.md` for validation and controlled dogfood.
 
 The suite treats Project Atlas HTML as a two-stage product:
 
-- a deterministic compiler emits `project-atlas.json`, `content.json`,
-  `project-atlas.css`, `project-atlas.html`, and a receipt;
+- a deterministic compiler emits exactly `index.html`, `project-atlas.json`,
+  `content.json`, and `design.css`; its receipt stays under the state root;
 - an optional `atlas-frontend-designer` server refines only presentation
-  surfaces through a tailored visual skill and markdown-renderer adapter.
+  proposals through a tailored visual skill and deterministic rebind.
 
 `project-atlas.json` remains the verifiable source of truth. `content.json`
-holds editable display copy and markdown content. `project-atlas.css` owns
-visual refinement. The HTML shell exposes stable IDs and design comments so UI
+holds bounded display copy and agent/design intent. `design.css` owns visual
+refinement and is compiled inline for reliable Android/offline direct opening.
+`index.html` exposes stable IDs and design comments so UI
 iteration can improve the frontend without touching authority-bearing data.
 See `release-docs/project-atlas-frontend-pipeline.md`.
 
 ## Release status
 
-Version `1.0.0` is a committed source candidate. It is not installed,
+Version `1.0.0` is an uncommitted local source candidate. It is not installed,
 marketplace-published, deployed, or released. The
 [`v1 closure record`](release-docs/v1-closure.md) lists observed evidence,
 paired final-byte gates, artifact-manifest procedure, and protected-effect

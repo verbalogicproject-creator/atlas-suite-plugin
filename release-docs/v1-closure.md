@@ -2,11 +2,10 @@
 
 ## Status and governing identities
 
-Version `1.0.0` is locally release-ready source. It is committed and pushed as
-a source candidate, but it is not installed, marketplace-published, deployed,
-or released. This conclusion is bound to both verified `ARTIFACTS.sha256`
-inventories, the paired final-byte gates below, and the independent closure
-verdict for those exact bytes. Any byte change invalidates the conclusion.
+Version `1.0.0` has a prior committed and pushed source candidate. The current
+working tree adds the agent-first Project Atlas implementation and must pass a
+new final-byte closure before it can be called locally release-ready. It is not
+installed, marketplace-published, deployed, or released.
 
 The approved local workflow is bound to:
 
@@ -28,8 +27,9 @@ invokes its exact CLI/resolver rather than translating contracts or
 implementing a second runtime. Missing framework resolution fails visibly
 without fallback.
 
-Atlas Frontend Designer is presentation-only. It may refine `content.json` and
-`project-atlas.css` after deterministic compilation, but it cannot mutate
+Atlas Frontend Designer is presentation-only. It may propose `content.json`
+and `design.css` refinements after deterministic compilation. Deterministic
+rebind regenerates `index.html`; the designer cannot mutate
 `project-atlas.json`, protected HTML IDs, source digests, proof limits,
 contract comments, or receipts.
 
@@ -40,20 +40,24 @@ the plugin or authorize any other effect.
 
 ## Observed candidate evidence
 
-- Plugin unit discovery passed seven tests.
+- Plugin unit discovery passed ten tests.
 - Direct and bridged `atlas plan` output was byte-identical for representative
   flags and every preset exercised by the suite.
 - Seven manifest-declared skills were present; missing framework resolution
   failed closed.
-- Baseline identity and deterministic-RAG KB validation passed, and the source
+- Baseline identity and deterministic-RAG KB validation passed.
 - The provider-neutral Claude Code marketplace descriptor has no product gate,
   provider account requirement, model-provider requirement, or runtime network
   requirement.
 - The source contained no install action or runtime database/model/environment
   artifacts.
-- The paired framework passed 35 warning-strict tests; its integrity,
+- The paired framework passed 45 warning-strict tests; its integrity,
   promotion-binding, and exact-text generation repairs are documented in its
   own `docs/v1-closure.md`.
+- The friendly entry point opened the menu without arguments, built an exact
+  four-file hub through the paired framework, and validated that bundle.
+- The framework self-dogfood routing fixture passed Recall@3 `1.0`, MRR `1.0`,
+  citation correctness `1.0`, repeatability, and its bounded context-cost gate.
 - Repository tests encode all five single flags, all four presets,
   representative/reversed combinations, and nine stateful direct/bridge
   run-and-Boot comparisons.
@@ -72,6 +76,12 @@ V1 does not claim persistent plugin installation or fresh-thread dogfood,
 hosted marketplace registration, sharing, live source acquisition/promotion,
 v2 ranking scores, semantic/reranker quality, model serving, Termux/proot
 cross-environment operation, publication, deployment, or market validation.
+
+The operator accepted the current Android HTTP-served Project Atlas visual
+baseline on 2026-08-09. Automated narrow, wide, print, no-JavaScript, and
+cross-browser qualification remains open because Playwright rejects this
+Android host and no Chromium executable is installed. Human acceptance is not
+presented as automated or cross-platform proof.
 
 ## Final reproduction gate
 

@@ -2,7 +2,7 @@
 
 ## 1.0.0 — local source candidate
 
-Status: locally release-ready source; not committed, installed, published,
+Status: local source candidate; not committed, installed, published,
 deployed, or released.
 
 ### Added
@@ -12,8 +12,12 @@ deployed, or released.
   frontend refinement from deterministic artifacts.
 - A thin bridge to the paired deterministic KG-RAG framework with no duplicate
   resolver or database implementation.
-- A documented Project Atlas frontend pipeline splitting `project-atlas.json`,
-  `content.json`, `project-atlas.css`, `project-atlas.html`, and receipts.
+- A zero-argument `scripts/atlas` menu and unchanged scriptable bridge.
+- An implemented Project Atlas pipeline producing exactly `index.html`,
+  `project-atlas.json`, `content.json`, and `design.css`, with receipts kept
+  under framework state.
+- Deterministic task context, direct impact inspection, dry-run annotation,
+  protected presentation rebind, and held-out relevance qualification routes.
 - A provider-neutral Claude Code marketplace descriptor with no product gate,
   provider account requirement, model-provider requirement, or runtime network
   requirement.
@@ -27,8 +31,8 @@ deployed, or released.
 
 ### Proof boundary
 
-- The plugin suite currently passes seven tests and the paired framework suite
-  passes 35 warning-strict tests.
+- The plugin suite currently passes ten tests and the paired framework suite
+  passes 45 warning-strict tests, including final audit regressions.
 - Exact artifact manifests and final-byte paired checks passed independent
   closure review.
 - The candidate remains intentionally uninstalled and has no hosted marketplace

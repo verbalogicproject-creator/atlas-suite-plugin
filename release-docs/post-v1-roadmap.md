@@ -36,14 +36,16 @@ KB. Do not market the public skill as the full Atlas Suite.
 Exit gate: a clean installation can orient a public fixture, render the static
 manual, validate determinism, and uninstall without private dependencies.
 
-## Stage 2.5 - Project Atlas frontend pipeline
+## Stage 2.5 - Project Atlas frontend pipeline (implemented candidate)
 
 Implement the approved two-stage frontend pipeline:
 
-- deterministic compiler emits `project-atlas.json`, `content.json`,
-  `project-atlas.css`, `project-atlas.html`, and a receipt;
+- deterministic compiler emits exactly `index.html`, `project-atlas.json`,
+  `content.json`, and `design.css`; receipts stay under the state root;
 - Atlas Frontend Designer, extracted and customized from Taste discipline,
-  edits only `content.json` presentation fields and `project-atlas.css`;
+  proposes only `content.json` presentation fields and `design.css`;
+- deterministic rebind regenerates `index.html` and validates protected
+  surfaces;
 - the optional designer server previews markdown-rendered content through a
   logical renderer adapter;
 - protected-surface validation proves canonical data, source digests, proof
@@ -52,6 +54,25 @@ Implement the approved two-stage frontend pipeline:
 Exit gate: static offline Atlas output still validates without a server;
 designer output passes protected-surface validation; no artifact records a
 device-specific absolute path.
+
+Remaining qualification: independent browser inspection and broader held-out
+task-route fixtures across large polyglot repositories.
+
+## Stage 2.6 - Miner and specialized Atlas expansion
+
+- Keep inventory, document, Python-import, relationship, and structural-score
+  operators behind the framework's versioned Miner contract.
+- Add API-schema extraction as the next deterministic operator, then promote
+  API Schema Atlas only after endpoint/type/auth/drift fixtures pass.
+- Treat neural vectors and agent-scored named dimensions as isolated derived
+  profiles. Promote no profile without held-out relevance, citation,
+  repeatability, and context-cost evidence.
+- Feed successful extraction and visual patterns into inactive recipe
+  candidates; promote only digest-bound candidates that pass regression gates.
+
+Exit gate: each operator is independently replayable, source-bound, and
+provider-neutral; specialized Atlases remain knowledge projections rather than
+aliases for indexes or scoring machinery.
 
 ## Stage 3 — maintained private Atlas Suite
 

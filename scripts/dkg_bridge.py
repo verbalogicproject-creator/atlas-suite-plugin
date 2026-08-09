@@ -36,7 +36,8 @@ def main() -> int:
     sys.path.insert(0, str(_framework_src()))
     from dkg.cli import main as dkg_main
 
-    return dkg_main(sys.argv[1:])
+    arguments = sys.argv[1:] or ["menu"]
+    return dkg_main(arguments)
 
 
 if __name__ == "__main__":

@@ -15,8 +15,12 @@
   requirement;
 - Project Atlas frontend docs preserve the source-of-truth split:
   `project-atlas.json` for verifiable canonical data, `content.json` for
-  editable display/markdown content, and `project-atlas.css` for visual
-  refinement;
+  bounded presentation context, `design.css` for visual refinement, and
+  compiler-owned `index.html` for the agent map;
+- the public Atlas bundle has exactly four files and its build/rebind receipts
+  remain under the state root;
+- held-out task routing passes its predeclared Recall@K, MRR, citation,
+  token-cost, and repeatability thresholds;
 - plugin tests pass on the exact candidate;
 - both repository artifact manifests verify after all documentation and source
   bytes stabilize.

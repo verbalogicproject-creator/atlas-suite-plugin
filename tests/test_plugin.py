@@ -94,6 +94,59 @@ class PluginTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("paired deterministic-kg-rag-framework was not found", result.stderr)
 
+    def test_friendly_entrypoint_opens_menu_and_builds_four_file_hub(self) -> None:
+        environment = self._environment()
+        bridge_menu = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "dkg_bridge.py")],
+            env=environment,
+            check=True,
+            capture_output=True,
+        )
+        wrapper_menu = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "atlas")],
+            env=environment,
+            check=True,
+            capture_output=True,
+        )
+        self.assertEqual(bridge_menu.stdout, wrapper_menu.stdout)
+        self.assertEqual(json.loads(bridge_menu.stdout)["status"], "selection-required")
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source"
+            source.mkdir()
+            self._make_source(source)
+            state = root / "state"
+            output = root / "site"
+            built = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts" / "atlas"),
+                    "atlas",
+                    "build",
+                    "--source",
+                    str(source),
+                    "--state-root",
+                    str(state),
+                    "--output",
+                    str(output),
+                ],
+                env=environment,
+                check=True,
+                capture_output=True,
+            )
+            self.assertEqual(json.loads(built.stdout)["bundle"]["status"], "built-and-validated")
+            self.assertEqual(
+                sorted(path.name for path in output.iterdir()),
+                ["content.json", "design.css", "index.html", "project-atlas.json"],
+            )
+            checked = subprocess.run(
+                [sys.executable, str(ROOT / "scripts" / "atlas"), "atlas", "check", "--output", str(output)],
+                env=environment,
+                check=True,
+                capture_output=True,
+            )
+            self.assertEqual(json.loads(checked.stdout)["status"], "passed")
+
     def test_bridge_rejects_incompatible_framework_before_import(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             framework = Path(temporary)

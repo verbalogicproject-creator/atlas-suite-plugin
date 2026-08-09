@@ -1,6 +1,6 @@
 # Project Atlas frontend pipeline
 
-Status: design contract for the next Project Atlas Suite implementation slice
+Status: implemented candidate contract; human baseline accepted, automated browser qualification open
 
 Project Atlas Suite separates authority, editable content, and visual
 refinement into distinct artifacts so Atlas output can become an interactive
@@ -13,20 +13,22 @@ canonical schema, source ledger, digests, claims, evidence, proof limits,
 stable IDs, section graph, and validation metadata. It is compiler-owned and
 must be byte-repeatable for the same source revision and compiler inputs.
 
-`content.json` is the editable content surface. It contains display copy,
-markdown bodies or renderer-safe markdown references, labels, section
-summaries, curated excerpts, and ordering hints. It may be edited by a human
-or the frontend designer stage, but it cannot add claims, change source
-digests, remove proof limits, or redefine canonical IDs.
+`content.json` is the bounded content surface. It contains display copy,
+labels, section summaries, route IDs, and explicit agent/design intent. A
+future renderer adapter may add digest-pinned Markdown references through a
+versioned contract. Human or frontend-designer proposals cannot add canonical
+claims, change source digests, remove proof limits, or redefine IDs.
 
-`project-atlas.css` is the visual layer. It contains theme variables,
+`design.css` is the visual layer. It contains theme variables,
 typography, responsive layout, visual hierarchy, and interaction polish. It
-may be refined without touching canonical data or the HTML shell.
+may be refined without touching canonical data or the HTML shell. Deterministic
+rebind embeds those validated bytes into the generated HTML for reliable
+`content://`, `file://`, and offline direct opening.
 
-`project-atlas.html` is a stable shell. It binds the source-of-truth JSON,
-content JSON, and CSS through fixed IDs and template slots. The shell may
-include embedded fallback copies for single-file portability, but the contract
-must still expose the three logical artifacts.
+`index.html` is a stable compiler-owned hub. It binds the source-of-truth JSON,
+content JSON, and the embedded CSS digest through fixed IDs and template slots. It renders the
+essential route and proof content statically so direct-file and no-JavaScript
+views remain useful.
 
 ## Two-stage pipeline
 
@@ -38,16 +40,19 @@ Stage 1 emits:
 
 - `project-atlas.json`
 - `content.json`
-- `project-atlas.css`
-- `project-atlas.html`
-- a receipt naming compiler version, inputs, output digests, and proof limit
+- `design.css`
+- `index.html`
+
+The build receipt names compiler inputs, output digests, and proof limit under
+the external state root. It is intentionally not a fifth public file.
 
 Stage 2 is `atlas-frontend-designer`. It is an optional server-backed design
 runtime with a Project-Atlas-specific visual skill. It can refine
-`content.json` presentation fields and `project-atlas.css`, preview the
-interactive Atlas, and propose UI variants. It cannot mutate
-`project-atlas.json`, protected HTML IDs, embedded canonical JSON, source
-digests, proof limits, or authority markers.
+`content.json` presentation fields and `design.css`, preview the interactive
+Atlas, and propose UI variants. The deterministic `atlas rebind` command
+regenerates `index.html`; the designer cannot mutate it directly or change
+`project-atlas.json`, canonical IDs, source digests, proof limits, or authority
+markers.
 
 ## HTML design handles
 
@@ -55,7 +60,7 @@ The deterministic shell should expose explicit comments for the design stage.
 These comments are an interface, not authority:
 
 ```html
-<!-- ATLAS-CONTRACT: project-atlas-html/3.0; protected ids and data digests must not change -->
+<!-- ATLAS-CONTRACT: dkg-project-atlas-html/1.0; protected ids and data digests must not change -->
 <!-- ATLAS-SOT: project-atlas.json sha256=<digest>; edit forbidden outside compiler -->
 <!-- ATLAS-CONTENT: content.json sha256=<digest>; editable presentation surface -->
 <!-- ATLAS-DESIGN: slot=overview intent="improve hierarchy; preserve bindings and source labels" -->
@@ -91,9 +96,9 @@ Stage 2 output must pass a protected-surface validator:
   unchanged.
 - `content.json` contains no new canonical claim, source digest, authority
   state, or external effect approval.
-- `project-atlas.css` has no remote imports and no device-specific absolute
+- `design.css` has no remote imports and no device-specific absolute
   paths.
-- `project-atlas.html` preserves protected IDs, script/data block IDs,
+- `index.html` preserves protected IDs, script/data block IDs,
   comments, and digest markers.
 - single-file offline fallback still opens without a server.
 
