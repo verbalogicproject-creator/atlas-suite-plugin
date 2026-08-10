@@ -28,16 +28,31 @@ compare stdout bytes. The plugin test suite exercises this invariant. For
 stateful dogfood, point both routes at the same isolated source and distinct
 state roots; compare plans, manifests, snapshots, receipts, and Harness Boot.
 
-Exercise the v0.2 companion capabilities through the same bridge:
+Exercise the v0.3 companion capabilities through the same bridge:
 
 ```sh
 ./scripts/atlas menu --choice 9 --source . --pack ../deterministic-kg-rag-framework/config/domain-packs/repository-architecture-v1.json --domain-output domain-projection
 ./scripts/atlas menu --choice 10 --source . --api-output api-schema.json
+./scripts/atlas backend capabilities
+./scripts/atlas backend describe --state-root .atlas-state
 ```
 
 Choice 9 builds a local domain graph and non-activated receipt. Choice 10
 emits a signed declaration projection. Neither command calls a model, follows
 network references, or registers a candidate.
+
+For a source-body-free backend read, compile a signed plan and run it against
+the same state binding:
+
+```sh
+./scripts/atlas backend plan record.list --state-root .atlas-state
+./scripts/atlas backend run --state-root .atlas-state --plan record-list.plan.json
+```
+
+The caller is responsible for capturing canonical plan stdout as the plan
+file. `backend run` reports answerable or explicit empty/abstain results with
+source anchors and refuses declared or intent-implied protected effects before
+reading. `query` remains the higher-level governed intent route.
 
 ## Project Atlas frontend dogfood
 
@@ -77,8 +92,9 @@ repeatability.
   invalid structured generation.
 - Four-file membership, same-input repeatability, task-route qualification,
   direct impact, annotation dry-run, and protected presentation rebind.
-- Domain-pack validation/mining, API-schema projection parity, and missing
-  required v0.2 capability refusal before framework import.
+- Domain-pack validation/mining, API-schema projection parity, backend
+  capabilities/describe/plan/run parity, and missing required v0.3 capability
+  refusal before framework import.
 - Plugin removal after a separately approved direct install.
 
 ## Installation boundary

@@ -19,11 +19,22 @@ with unchanged arguments. Therefore plugin and CLI plan/receipt semantics
 cannot drift through a second implementation. If the paired framework is not
 found, the plugin fails visibly and performs no fallback.
 
-Before import, the bridge validates the framework distribution/version pair,
+Before import, the bridge validates framework `>=0.3.0,<0.4.0`,
 `dkg-framework-interface/1.0`, `dkg-cli/1.0`, and the required Atlas, domain,
-qualification, API-schema, and four-file capabilities. Domain mining, ranking,
-candidate validation, and API projection remain framework modules; the plugin
-adds only agent-facing skills, menu access, and parity tests.
+qualification, API-schema, four-file, read-backend, and canonical 16-query
+capabilities. Domain mining, ranking, candidate validation, backend execution,
+and API projection remain framework modules; the plugin adds only agent-facing
+skills, unchanged-argument access, menu access, and parity tests.
+
+The agent surface is organized by task rather than repository ownership:
+orientation uses `atlas context` or `repo-orientation`; audit uses domain and
+evidence routes; architecture inspection uses record and graph reads;
+implementation tracing uses `record.get`, `graph.walk`, and
+`provenance.trace`; impact uses `atlas impact` or `impact.analyze`; extraction
+uses domain mining and `record.list`; bounded task context uses `atlas context`
+or `context.compile`; and frontend generation uses `atlas build`. Backend
+results expose signed source anchors, explicit empty/abstain outcomes, and
+pre-read safety refusal. The governed query route retains the same boundary.
 
 Project Atlas frontend generation is a two-stage pipeline. The deterministic
 compiler owns the exact four-file public bundle: `index.html`,

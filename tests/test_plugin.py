@@ -11,6 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 FRAMEWORK = ROOT.parent / "deterministic-kg-rag-framework"
 IGNORED_TREE_PARTS = {".git", ".dogfood-state", ".pytest_cache", ".venv", "__pycache__"}
+REQUIRED_FRAMEWORK_CAPABILITIES = [
+    "api-schema-projection",
+    "atlas-five-core",
+    "backend-read-v1",
+    "domain-mining",
+    "domain-qualification",
+    "project-atlas-four-file",
+    "query-capabilities-16",
+]
 
 
 class PluginTests(unittest.TestCase):
@@ -28,10 +37,36 @@ class PluginTests(unittest.TestCase):
         (root / "config").mkdir()
         (root / "config" / "source-ledger.json").write_text('{"schema":"dkg-source-ledger/1.0","sources":[]}\n', encoding="utf-8")
 
+    @staticmethod
+    def _make_framework_identity(root: Path, version: str, capabilities: list[str]) -> Path:
+        package = root / "src" / "dkg"
+        package.mkdir(parents=True)
+        marker = root / "imported"
+        (package / "__init__.py").write_text("", encoding="utf-8")
+        (package / "cli.py").write_text(
+            f"from pathlib import Path\nPath({str(marker)!r}).write_text('imported')\n",
+            encoding="utf-8",
+        )
+        (root / "pyproject.toml").write_text(
+            f'[project]\nname = "deterministic-kg-rag-framework"\nversion = "{version}"\nrequires-python = ">=3.11"\n',
+            encoding="utf-8",
+        )
+        (root / "config").mkdir()
+        (root / "config" / "framework-interface.json").write_text(json.dumps({
+            "schema": "dkg-framework-interface/1.0",
+            "distribution": "deterministic-kg-rag-framework",
+            "framework_version": version,
+            "cli_contract": "dkg-cli/1.0",
+            "python_requires": ">=3.11",
+            "capabilities": capabilities,
+            "proof_limit": "compatibility fixture",
+        }), encoding="utf-8")
+        return marker
+
     def test_manifest_and_seven_skills_are_closed(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
         self.assertEqual(manifest["name"], "atlas-suite-plugin")
-        self.assertEqual(manifest["version"], "1.0.1")
+        self.assertEqual(manifest["version"], "1.1.0")
         skills = sorted(path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md"))
         self.assertEqual(
             skills,
@@ -97,6 +132,65 @@ class PluginTests(unittest.TestCase):
                 env=environment, check=True, capture_output=True,
             )
             self.assertEqual(json.loads(mined.stdout)["receipt"]["status"], "built-not-activated")
+
+    def test_backend_and_governed_query_routes_preserve_canonical_bytes(self) -> None:
+        environment = self._environment()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source"
+            source.mkdir()
+            self._make_source(source)
+            state = root / "state"
+            subprocess.run(
+                [sys.executable, "-m", "dkg", "atlas", "run", "--flags", "project", "--source", str(source), "--state-root", str(state)],
+                env=environment, check=True, capture_output=True,
+            )
+
+            parity_commands = [
+                ["backend", "capabilities"],
+                ["backend", "describe", "--state-root", str(state)],
+            ]
+            for arguments in parity_commands:
+                with self.subTest(arguments=arguments):
+                    direct = subprocess.run([sys.executable, "-m", "dkg", *arguments], env=environment, check=True, capture_output=True).stdout
+                    bridge = subprocess.run([sys.executable, str(ROOT / "scripts" / "atlas"), *arguments], env=environment, check=True, capture_output=True).stdout
+                    self.assertEqual(direct, bridge)
+
+            cases = [
+                ("record.list", {}, [], "answerable"),
+                ("record.get", {"record_id": "record:missing"}, [], "empty"),
+                ("record.get", {"record_id": "record:missing"}, ["--empty-disposition", "abstain"], "abstain"),
+                ("record.list", {}, ["--intent", "deploy production"], "refuse"),
+            ]
+            for index, (capability, parameters, controls, disposition) in enumerate(cases):
+                with self.subTest(capability=capability):
+                    parameters_path = root / f"parameters-{index}.json"
+                    parameters_path.write_text(json.dumps(parameters), encoding="utf-8")
+                    arguments = ["backend", "plan", capability, "--state-root", str(state), "--parameters", str(parameters_path), *controls]
+                    direct_plan = subprocess.run([sys.executable, "-m", "dkg", *arguments], env=environment, check=True, capture_output=True).stdout
+                    bridge_plan = subprocess.run([sys.executable, str(ROOT / "scripts" / "atlas"), *arguments], env=environment, check=True, capture_output=True).stdout
+                    self.assertEqual(direct_plan, bridge_plan)
+                    plan_path = root / f"plan-{index}.json"
+                    plan_path.write_bytes(direct_plan)
+                    run_arguments = ["backend", "run", "--state-root", str(state), "--plan", str(plan_path)]
+                    direct_result = subprocess.run([sys.executable, "-m", "dkg", *run_arguments], env=environment, check=True, capture_output=True).stdout
+                    bridge_result = subprocess.run([sys.executable, str(ROOT / "scripts" / "atlas"), *run_arguments], env=environment, check=True, capture_output=True).stdout
+                    self.assertEqual(direct_result, bridge_result)
+                    result = json.loads(bridge_result)
+                    self.assertEqual(result["disposition"], disposition)
+                    self.assertEqual(result["effects_executed"], [])
+                    if disposition == "answerable":
+                        self.assertGreater(result["counts"]["evidence"], 0)
+                    if disposition == "refuse":
+                        self.assertEqual(result["channels"], [])
+
+            for intent, disposition in (("???", "abstain"), ("deploy production", "refuse")):
+                with self.subTest(intent=intent):
+                    arguments = ["query", intent, "--state-root", str(state)]
+                    direct = subprocess.run([sys.executable, "-m", "dkg", *arguments], env=environment, check=True, capture_output=True).stdout
+                    bridge = subprocess.run([sys.executable, str(ROOT / "scripts" / "atlas"), *arguments], env=environment, check=True, capture_output=True).stdout
+                    self.assertEqual(direct, bridge)
+                    self.assertEqual(json.loads(bridge)["packet"]["disposition"], disposition)
 
     def test_nine_stateful_direct_and_bridge_runs_and_boots_are_identical(self) -> None:
         environment = self._environment()
@@ -181,53 +275,30 @@ class PluginTests(unittest.TestCase):
             self.assertEqual(json.loads(checked.stdout)["status"], "passed")
 
     def test_bridge_rejects_incompatible_framework_before_import(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            framework = Path(temporary)
-            package = framework / "src" / "dkg"
-            package.mkdir(parents=True)
-            marker = framework / "imported"
-            (package / "cli.py").write_text(f"from pathlib import Path\nPath({str(marker)!r}).write_text('imported')\n", encoding="utf-8")
-            (framework / "pyproject.toml").write_text('[project]\nname = "deterministic-kg-rag-framework"\nversion = "2.0.0"\nrequires-python = ">=99"\n', encoding="utf-8")
-            (framework / "config").mkdir()
-            (framework / "config" / "framework-interface.json").write_text(json.dumps({
-                "schema": "dkg-framework-interface/1.0",
-                "distribution": "deterministic-kg-rag-framework",
-                "framework_version": "2.0.0",
-                "cli_contract": "dkg-cli/1.0",
-                "python_requires": ">=99",
-                "capabilities": [
-                    "api-schema-projection",
-                    "atlas-five-core",
-                    "domain-mining",
-                    "domain-qualification",
-                    "project-atlas-four-file",
-                ],
-                "proof_limit": "incompatible fixture",
-            }), encoding="utf-8")
-            environment = {**os.environ, "DKG_FRAMEWORK_ROOT": str(framework)}
-            result = subprocess.run([sys.executable, str(ROOT / "scripts" / "dkg_bridge.py"), "atlas", "plan", "--flags", "project"], env=environment, capture_output=True, text=True)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("must be version 0.2.0 with Python >=3.11", result.stderr)
-            self.assertFalse(marker.exists())
+        for version in ("0.2.9", "0.4.0", "0.3", "0.3.0-rc1", "not-a-version"):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as temporary:
+                framework = Path(temporary)
+                marker = self._make_framework_identity(framework, version, REQUIRED_FRAMEWORK_CAPABILITIES)
+                environment = {**os.environ, "DKG_FRAMEWORK_ROOT": str(framework)}
+                result = subprocess.run([sys.executable, str(ROOT / "scripts" / "dkg_bridge.py"), "atlas", "plan", "--flags", "project"], env=environment, capture_output=True, text=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("must be version >=0.3.0,<0.4.0 with Python >=3.11", result.stderr)
+                self.assertFalse(marker.exists())
+
+    def test_bridge_accepts_compatible_patch_versions_before_import(self) -> None:
+        for version in ("0.3.0", "0.3.7"):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as temporary:
+                framework = Path(temporary)
+                marker = self._make_framework_identity(framework, version, REQUIRED_FRAMEWORK_CAPABILITIES)
+                environment = {**os.environ, "DKG_FRAMEWORK_ROOT": str(framework)}
+                result = subprocess.run([sys.executable, str(ROOT / "scripts" / "dkg_bridge.py"), "atlas", "plan", "--flags", "project"], env=environment, capture_output=True, text=True)
+                self.assertNotIn("paired framework must be version", result.stderr)
+                self.assertTrue(marker.exists())
 
     def test_bridge_rejects_missing_required_capability_before_import(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             framework = Path(temporary)
-            package = framework / "src" / "dkg"
-            package.mkdir(parents=True)
-            marker = framework / "imported"
-            (package / "cli.py").write_text(f"from pathlib import Path\nPath({str(marker)!r}).write_text('imported')\n", encoding="utf-8")
-            (framework / "pyproject.toml").write_text('[project]\nname = "deterministic-kg-rag-framework"\nversion = "0.2.0"\nrequires-python = ">=3.11"\n', encoding="utf-8")
-            (framework / "config").mkdir()
-            (framework / "config" / "framework-interface.json").write_text(json.dumps({
-                "schema": "dkg-framework-interface/1.0",
-                "distribution": "deterministic-kg-rag-framework",
-                "framework_version": "0.2.0",
-                "cli_contract": "dkg-cli/1.0",
-                "python_requires": ">=3.11",
-                "capabilities": [],
-                "proof_limit": "missing capability fixture",
-            }), encoding="utf-8")
+            marker = self._make_framework_identity(framework, "0.3.0", [])
             environment = {**os.environ, "DKG_FRAMEWORK_ROOT": str(framework)}
             result = subprocess.run([sys.executable, str(ROOT / "scripts" / "dkg_bridge.py"), "atlas", "plan", "--flags", "project"], env=environment, capture_output=True, text=True)
             self.assertNotEqual(result.returncode, 0)

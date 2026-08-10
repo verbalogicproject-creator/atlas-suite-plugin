@@ -1,8 +1,10 @@
 # Atlas Suite Plugin
 
-Atlas Suite is a thin Apache-2.0 Codex plugin for the five deterministic DKG
-Atlases, an upgraded KG-RAG Specialist, and an agent-first Project Atlas frontend
-pipeline. It contains no database engine and does not fork the DKG contracts.
+Provider-neutral agent interface for deterministic repository Atlases, KG-RAG
+workflows, bounded context, and Project Atlas frontend generation.
+
+Atlas Suite is a thin Apache-2.0 Codex plugin. It contains no database engine
+and does not fork the DKG contracts.
 `scripts/dkg_bridge.py` resolves the paired `deterministic-kg-rag-framework`
 and invokes its exact CLI/resolver.
 
@@ -42,6 +44,33 @@ Mine repository structure or inspect API declarations without a model:
 ./scripts/atlas domain api-schema --source . --output api-schema.json
 ```
 
+The v1.1 bridge accepts framework versions `>=0.3.0,<0.4.0` only after the
+framework declares its closed interface plus the read-backend and canonical
+16-query capability surfaces. Backend arguments pass through byte-for-byte:
+
+```sh
+./scripts/atlas backend capabilities
+./scripts/atlas backend describe --state-root .atlas-state
+./scripts/atlas backend plan record.list --state-root .atlas-state
+./scripts/atlas backend run --state-root .atlas-state --plan record-list.plan.json
+```
+
+Task-facing routes remain provider-neutral and map to framework contracts:
+
+- orient: `atlas context` or the `repo-orientation` preset;
+- audit: `domain mine`, `domain query`, and evidence-backed backend reads;
+- inspect architecture: `atlas context` plus graph/record capabilities;
+- trace implementation: `record.get`, `graph.walk`, and `provenance.trace`;
+- analyze impact: `atlas impact` or `impact.analyze`;
+- extract components: `domain mine` and `record.list`;
+- build task context: `atlas context` or `context.compile`;
+- generate Project Atlas: `atlas build`, retaining exactly four public files.
+
+`backend run` reports `answerable` or explicit `empty`/`abstain` outcomes from
+governed records and refuses declared or intent-implied protected effects
+before reading. The established `query` route retains the same governed safety
+boundary; neither route grants mutation or activation authority.
+
 See `release-docs/operations.md` for validation and controlled dogfood.
 
 ## Project Atlas frontend pipeline
@@ -62,16 +91,16 @@ See `release-docs/project-atlas-frontend-pipeline.md`.
 
 ## Release status
 
-Version `1.0.1` is the current local source candidate paired with framework
-`0.2.0`. It is not installed,
+Version `1.1.0` is the current local source candidate paired with framework
+`>=0.3.0,<0.4.0`. It is not installed,
 marketplace-published, deployed, or released. The
-[`v1 closure record`](release-docs/v1-closure.md) lists observed evidence,
-paired final-byte gates, artifact-manifest procedure, and protected-effect
-boundary. See the [`changelog`](CHANGELOG.md) for candidate contents.
+historical [`v1 closure record`](release-docs/v1-closure.md) lists the frozen
+v1 evidence. The [`changelog`](CHANGELOG.md) describes the v1.1 source
+candidate and its final-byte artifact evidence.
 
-## After v1.0.1
+## After v1.1.0
 
-The [plugin roadmap](release-docs/post-v1-roadmap.md) defines the post-`v1.0.1`
+The historical [post-v1 roadmap](release-docs/post-v1-roadmap.md) records the
 continuity, capability-contract, project-memory, and optional Command Center
-tracks. It defers to the paired framework roadmap for stable system contracts
-and phase gates.
+tracks that led to this backend bridge. Later work defers to the paired
+framework roadmap for stable system contracts and phase gates.

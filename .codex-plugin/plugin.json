@@ -1,7 +1,7 @@
 {
   "name": "atlas-suite-plugin",
-  "version": "1.0.1",
-  "description": "Deterministic Atlas skills, a governed KG-RAG Specialist, and an Atlas frontend designer",
+  "version": "1.1.0",
+  "description": "Provider-neutral agent interface for deterministic repository Atlases, KG-RAG workflows, bounded context, and Project Atlas frontend generation.",
   "author": {
     "name": "Atlas Suite contributors"
   },
@@ -12,7 +12,7 @@
     "longDescription": "Atlas Suite provides Project, Context, Knowledge, Topology, and Evidence-Rules Atlas skills, a source-grounded KG-RAG Specialist, and an Atlas Frontend Designer for content/CSS-only presentation refinement. It delegates deterministic execution to the paired dkg framework and never grants protected-effect authority.",
     "developerName": "Atlas Suite contributors",
     "category": "Productivity",
-    "capabilities": ["api-schema-projection", "atlas-frontend-design", "deterministic-atlas", "domain-mining", "governed-kg-rag"],
+    "capabilities": ["api-schema-projection", "atlas-frontend-design", "backend-read-v1", "deterministic-atlas", "domain-mining", "governed-kg-rag", "query-capabilities-16"],
     "defaultPrompt": "Use the appropriate Atlas Suite skill to produce a deterministic, cited, proof-bounded result."
   }
 }

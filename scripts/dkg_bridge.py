@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import json
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -13,10 +14,24 @@ from pathlib import Path
 REQUIRED_CAPABILITIES = {
     "api-schema-projection",
     "atlas-five-core",
+    "backend-read-v1",
     "domain-mining",
     "domain-qualification",
     "project-atlas-four-file",
+    "query-capabilities-16",
 }
+
+VERSION_RE = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+
+
+def _compatible_framework_version(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    matched = VERSION_RE.fullmatch(value)
+    if matched is None:
+        return False
+    version = tuple(int(part) for part in matched.groups())
+    return (0, 3, 0) <= version < (0, 4, 0)
 
 
 def _framework_src() -> Path:
@@ -45,7 +60,7 @@ def _framework_src() -> Path:
     }
     compatible = (
         name == "deterministic-kg-rag-framework"
-        and version == "0.2.0"
+        and _compatible_framework_version(version)
         and python_requires == ">=3.11"
         and sys.version_info >= (3, 11)
         and isinstance(interface, dict)
@@ -60,7 +75,7 @@ def _framework_src() -> Path:
         and all(isinstance(item, str) and item for item in interface["capabilities"])
     )
     if not compatible:
-        raise SystemExit("atlas-suite: paired framework must be version 0.2.0 with Python >=3.11, dkg-framework-interface/1.0, and dkg-cli/1.0")
+        raise SystemExit("atlas-suite: paired framework must be version >=0.3.0,<0.4.0 with Python >=3.11, dkg-framework-interface/1.0, and dkg-cli/1.0")
     missing = sorted(REQUIRED_CAPABILITIES - set(interface["capabilities"]))
     if missing:
         raise SystemExit(f"atlas-suite: paired framework is missing required capabilities: {','.join(missing)}")

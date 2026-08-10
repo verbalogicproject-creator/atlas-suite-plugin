@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.1.0 - framework v0.3 companion candidate
+
+Status: local source candidate; not installed, published, deployed, or
+released.
+
+### Added
+
+- Fail-closed framework compatibility for `>=0.3.0,<0.4.0` with the exact
+  `dkg-framework-interface/1.0` and `dkg-cli/1.0` identities.
+- Required `backend-read-v1` and `query-capabilities-16` declarations before
+  framework import.
+- Unchanged-argument access to signed backend capabilities, descriptors,
+  plans, results, evidence, explicit empty/abstain outcomes, and pre-read
+  safety refusal.
+- Task-facing routes for orientation, audit, architecture inspection,
+  implementation tracing, impact, component extraction, bounded context, and
+  four-file Project Atlas generation.
+
+### Proof boundary
+
+- Backend reads are source-body-free and read-only, with bounded runtime
+  abstention and safety refusal. Established governed query contracts retain
+  the same authority boundary.
+- The plugin remains a thin provider-neutral bridge; it cannot mutate or
+  activate canonical knowledge.
+- `ARTIFACTS.sha256` is regenerated from the qualified v1.1.0 source bytes;
+  any later edit invalidates that evidence.
+
 ## 1.0.1 - framework v0.2 companion candidate
 
 Status: local source candidate; not installed, published, deployed, or

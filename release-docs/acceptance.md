@@ -19,8 +19,10 @@
   compiler-owned `index.html` for the agent map;
 - the public Atlas bundle has exactly four files and its build/rebind receipts
   remain under the state root;
-- the bridge validates the exact interface and required v0.2 capability set
-  before import, and direct/bridged domain-pack plus API-schema outputs are
+- the bridge validates framework `>=0.3.0,<0.4.0`, the exact interface, and the
+  required v0.3 capability set before import;
+- direct/bridged domain-pack, API-schema, backend
+  capabilities/describe/plan/run, and governed abstain/refuse outputs are
   byte-identical;
 - menu choices 9 and 10 expose repository-domain mining and declaration-only
   API inspection without creating a second plugin engine;
@@ -33,8 +35,9 @@
 ## Qualification classification
 
 Implemented: plugin structure, seven namespaced skills, paired DKG bridge,
-Atlas frontend design boundary, baseline preservation, KB v1, validation
-scripts, and local documentation.
+v0.3 capability gating, task-facing backend access, Atlas frontend design
+boundary, baseline preservation, KB v1, validation scripts, and local
+documentation.
 
 Deferred: direct installation/removal dogfood, installed-skill invocation in a
 fresh Codex thread, live acquisition/promotion, models, v2 ranking replay,
@@ -45,7 +48,8 @@ weaken or reinterpret it.
 ## Local release meaning
 
 A candidate becomes locally release-ready source only after the final-byte
-checks and exact artifact manifests pass. That status still does not mean
+checks and exact artifact manifests pass. `ARTIFACTS.sha256` binds the qualified
+v1.1 source bytes and must be regenerated after any edit. Release-ready status does not mean
 installed or released.
 Commit, push, PR, installation, cache update, marketplace entry, share link,
 publication, or deployment require separate authority. Any change to the
