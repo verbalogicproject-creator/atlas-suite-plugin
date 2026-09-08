@@ -66,18 +66,18 @@ class PluginTests(unittest.TestCase):
     def test_manifest_and_seven_skills_are_closed(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
         self.assertEqual(manifest["name"], "atlas-suite-plugin")
-        self.assertEqual(manifest["version"], "1.1.0")
-        skills = sorted(path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md"))
+        self.assertRegex(manifest["version"], r"^1\.1\.0(?:\+codex\.[0-9A-Za-z.-]+)?$")
+        skills = sorted(path.relative_to(ROOT / "skills").as_posix() for path in (ROOT / "skills").rglob("SKILL.md"))
         self.assertEqual(
             skills,
             [
-                "atlas-frontend-designer",
-                "context-atlas",
-                "evidence-rules-atlas",
-                "kg-rag-specialist",
-                "knowledge-atlas",
-                "project-atlas",
-                "topology-atlas",
+                "atlas-frontend-designer/SKILL.md",
+                "context-atlas/SKILL.md",
+                "evidence-rules-atlas/SKILL.md",
+                "kg-rag-specialist/SKILL.md",
+                "knowledge-atlas/SKILL.md",
+                "project-atlas/SKILL.md",
+                "topology-atlas/SKILL.md",
             ],
         )
         for path in (ROOT / "skills").glob("*/SKILL.md"):
@@ -368,6 +368,8 @@ class PluginTests(unittest.TestCase):
             [
                 "acceptance.md",
                 "architecture.md",
+                "capability-profiles.md",
+                "codex-install-dogfood-2026-08-18.md",
                 "operations.md",
                 "post-v1-roadmap.md",
                 "project-atlas-frontend-pipeline.md",

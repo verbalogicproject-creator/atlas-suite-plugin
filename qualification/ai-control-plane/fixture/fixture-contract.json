@@ -1,0 +1,1 @@
+{"allowed_statuses":["completed","pending"],"function":"summarize_tasks(records)","input_preserved":true,"output":{"completed_ids":"sorted string list","pending_ids":"sorted string list","total":"record count"},"repairable_paths":["src/task_summary.py"],"schema":"atlas-ai-control-plane-fixture/1.0","unknown_status":"raise ValueError"}

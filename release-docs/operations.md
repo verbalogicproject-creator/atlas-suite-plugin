@@ -11,6 +11,28 @@ python3 skills/kg-rag-specialist/scripts/validate_deterministic_kb.py
 PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s tests -v
 ```
 
+Qualification-specific checks and canonical candidate-artifact regeneration:
+
+```sh
+./scripts/atlas profile list
+./scripts/atlas profile plan fullstack-contract-spine
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_receipts.py
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_receipts.py --write
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_ai_control_plane.py \
+  verify qualification/ai-control-plane/runs/ai-control-plane-frozen-1/runtime.json
+```
+
+The first command family is always read-only. `--write` changes only the
+declared candidate result, separately signed standalone-replay verification, and receipt
+files under `qualification/`; use it after intentional source or fixture
+changes. It does not promote claims or produce a release receipt. The local
+verifier runs as a distinct read-only process, repeats the frozen qualification,
+and rejects semantically tampered producer results; it is not an external trust domain.
+The stored AI runtime artifact is a single-run, source- and host-bound
+candidate. Regeneration requires fresh active-session approval for the exact
+temporary repair target and must set `ATLAS_AI_RUNTIME_ARTIFACT` explicitly;
+ordinary replay without that variable fails closed to runtime absence.
+
 Also run the plugin manifest validator and the skill-creator quick validator
 from their installed development-tool locations against each of the seven
 repository-relative skill directories. Record the exact validator identities
@@ -96,14 +118,23 @@ repeatability.
   capabilities/describe/plan/run parity, and missing required v0.3 capability
   refusal before framework import.
 - Plugin removal after a separately approved direct install.
+- Closed profile validation, unknown-adapter refusal, deterministic profile
+  descriptions, ten-case full-stack drift replay, paired-DKG evidence-firewall
+  replay, and the production-locked single-run AI host-runtime receipt.
+- Result, fixture/source, adapter, DKG/In-the-Loop identity, environment,
+  producer, verifier, and verification-record drift must report stale or
+  ineligible before any owner promotion decision.
 
 ## Installation boundary
 
-V1 contains no hosted marketplace publication and no cachebuster action. Direct
-installation must target the exact verified repository path and remain beside
-existing skills. Installation, reinstall, removal, and any cache update are
-protected effects and need separate approval. Never edit the installed
-in-the-loop cache.
+The release baseline contains no hosted marketplace publication. A local Codex
+development install uses a host-local marketplace pointing at the exact
+verified repository path, followed by the plugin-creator cachebuster and
+reinstall flow. The installed bridge also needs the paired framework root
+available as `DKG_FRAMEWORK_ROOT`; on Codex this may be injected through the
+documented `shell_environment_policy.set` configuration. Installation,
+reinstall, removal, cache changes, and environment configuration are protected
+effects and need exact approval. Never edit the installed in-the-loop cache.
 
 ## Marketplace descriptor
 

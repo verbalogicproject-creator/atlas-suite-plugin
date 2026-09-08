@@ -18,11 +18,11 @@ Skills:
 - `atlas-suite-plugin:kg-rag-specialist`
 - `atlas-suite-plugin:atlas-frontend-designer`
 
-The plugin is intentionally not installed. It includes a provider-neutral
-Claude Code marketplace descriptor under `marketplace/claude-code/` for
-distribution metadata. Direct installation, cache updates, removal, hosted
-marketplace publication, marketplace mutation, and sharing each remain separate
-user-approved effects.
+A separately approved local Codex development installation now exists through
+the host-local `atlas-suite-local` marketplace. The repository still includes
+only a provider-neutral Claude Code descriptor under `marketplace/claude-code/`
+for distribution metadata. Removal, hosted publication, sharing, deployment,
+and other external effects remain separately approved actions.
 
 ## Paired local use
 
@@ -73,6 +73,26 @@ boundary; neither route grants mutation or activation authority.
 
 See `release-docs/operations.md` for validation and controlled dogfood.
 
+## Transparent capability profiles
+
+Inspect named combinations without executing them:
+
+```sh
+./scripts/atlas profile list
+./scripts/atlas profile describe fullstack-contract-spine
+./scripts/atlas profile explain rag-evidence-firewall
+./scripts/atlas profile plan ai-tool-control-plane
+./scripts/atlas profile qualification fullstack-contract-spine
+```
+
+These commands are deterministic and read-only; there is no profile `run`
+route. Three candidate profiles expose the full-stack contract spine, RAG
+evidence firewall, and Atlas/In-the-Loop/Codex control plane. All three have
+current passing local candidate receipts. The control-plane evidence covers
+one production-roster orientation and one deny-then-approved frozen repair;
+it does not claim repeatability or promote registry maturity.
+See [`capability profiles and qualification`](release-docs/capability-profiles.md).
+
 ## Project Atlas frontend pipeline
 
 The suite treats Project Atlas HTML as a two-stage product:
@@ -91,12 +111,15 @@ See `release-docs/project-atlas-frontend-pipeline.md`.
 
 ## Release status
 
-Version `1.1.0` is the current local source candidate paired with framework
-`>=0.3.0,<0.4.0`. It is not installed,
-marketplace-published, deployed, or released. The
+Version `1.1.0` is the current source baseline paired with framework
+`>=0.3.0,<0.4.0`. A cachebusted `1.1.0+codex.*` build is installed and has
+passed bounded local Codex dogfood; it is not hosted-marketplace-published,
+deployed, shared, or released. The
 historical [`v1 closure record`](release-docs/v1-closure.md) lists the frozen
 v1 evidence. The [`changelog`](CHANGELOG.md) describes the v1.1 source
-candidate and its final-byte artifact evidence.
+candidate and its final-byte artifact evidence. See the
+[Codex dogfood record](release-docs/codex-install-dogfood-2026-08-18.md) for
+the installed proof and remaining gaps.
 
 ## After v1.1.0
 

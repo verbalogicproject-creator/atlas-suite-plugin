@@ -9,7 +9,7 @@
     "references/kg-rag/workspace/kg-rag/recipe-registry.json": "eec6c909651b6011ac78b594d36fce03044607667274436d2fcde280a900e223"
   },
   "copy_layout": {
-    "original_skill_and_agent_metadata": "references/baseline-package/",
+    "original_skill_and_agent_metadata": "vendor/kg-rag-specialist-baseline/",
     "original_references": "references/kg-rag/ and references/binding/",
     "original_scripts": "scripts/"
   },

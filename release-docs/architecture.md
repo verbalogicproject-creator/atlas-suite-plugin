@@ -70,3 +70,20 @@ Context, model output, retrieval, MCP, skills, and receipts never grant effect
 authority. The plugin cannot enable a connector, start a model, install itself,
 commit, publish, deploy, or modify a marketplace without a separate active
 request naming that exact effect.
+
+The qualification layer under `qualification/` adds a two-axis capability
+registry, closed JSON profiles, proof plans, frozen fixtures, and candidate
+receipts. `scripts/qualification_core.py` owns only deterministic discovery and
+validation. Profile routing happens before DKG resolution so `profile list`,
+`describe`, and `explain` work without importing the engine; adapter-aware
+`plan` reports missing paired contracts without executing them. The DKG remains
+the graph/RAG engine, and In-the-Loop remains the workflow authority.
+
+Qualification receipt v2 binds each result to canonical source/fixture files,
+the complete paired-DKG bridge identity when applicable, the authoritative
+In-the-Loop linter/contract identity, runtime and root environment, and a
+separately signed standalone local replay-verification artifact. The verifier
+runs as a different process: it repeats the full-stack suite or rebuilds and
+queries isolated RAG state while resolving citation source hashes. Read-only qualification
+recomputes those bindings. Drift is reported as stale/ineligible; it never
+silently reuses a passing receipt.

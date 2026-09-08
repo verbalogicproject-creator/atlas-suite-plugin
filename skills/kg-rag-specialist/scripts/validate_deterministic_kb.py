@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+PLUGIN_ROOT = ROOT.parents[1]
 KB = ROOT / "references" / "deterministic-rag-kb" / "v1"
 BASELINE = ROOT / "references" / "kg-rag" / "workspace"
 BASELINE_MANIFEST = ROOT / "references" / "baseline-manifest.json"
@@ -22,7 +23,7 @@ def load(name: str) -> dict:
 def baseline_tree() -> tuple[int, str]:
     entries = []
     roots = (
-        (ROOT / "references" / "baseline-package", ROOT / "references" / "baseline-package"),
+        (PLUGIN_ROOT / "vendor" / "kg-rag-specialist-baseline", PLUGIN_ROOT / "vendor" / "kg-rag-specialist-baseline"),
         (ROOT / "references" / "binding", ROOT),
         (ROOT / "references" / "kg-rag", ROOT),
         (ROOT / "scripts", ROOT),

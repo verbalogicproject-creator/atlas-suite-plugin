@@ -83,10 +83,14 @@ def _framework_src() -> Path:
 
 
 def main() -> int:
+    arguments = sys.argv[1:] or ["menu"]
+    if arguments[0] == "profile":
+        from qualification_core import main as profile_main
+
+        return profile_main(arguments[1:])
     sys.path.insert(0, str(_framework_src()))
     from dkg.cli import main as dkg_main
 
-    arguments = sys.argv[1:] or ["menu"]
     return dkg_main(arguments)
 
 

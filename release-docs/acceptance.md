@@ -2,7 +2,9 @@
 
 ## Required local checks
 
-- plugin manifest validation passes with seven discoverable skills;
+- plugin manifest validation and fresh-process Codex discovery pass with
+  exactly seven active skills; pinned reference packages do not add duplicate
+  skill identities;
 - every skill passes quick validation and contains no placeholders;
 - plugin/direct plan stdout is byte-identical for all presets and representative flags;
 - the bridge fails closed when the framework cannot be resolved;
@@ -29,6 +31,13 @@
 - held-out task routing passes its predeclared Recall@K, MRR, citation,
   token-cost, and repeatability thresholds;
 - plugin tests pass on the exact candidate;
+- profile registry/schema/proof-plan contracts reject unknown or ambiguous
+  fields, adapters, components, authority sources, and stale receipt digests;
+- profile CLI output is canonical and read-only, and no execution route exists;
+- full-stack and RAG candidate receipts replay byte-identically, while the AI
+  candidate binds one real production-roster host run; all three pass frozen
+  thresholds with separately signed standalone verification records;
+  result/source/adapter/environment/verifier drift is ineligible;
 - both repository artifact manifests verify after all documentation and source
   bytes stabilize.
 
@@ -39,18 +48,33 @@ v0.3 capability gating, task-facing backend access, Atlas frontend design
 boundary, baseline preservation, KB v1, validation scripts, and local
 documentation.
 
-Deferred: direct installation/removal dogfood, installed-skill invocation in a
-fresh Codex thread, live acquisition/promotion, models, v2 ranking replay,
-hosted marketplace publication, and publication. The paired framework's exact-text
+Observed locally: direct Codex installation, cachebusted update/reinstall,
+fresh-process discovery of exactly seven unique skills, one fresh read-only
+Codex thread using all seven skills, installed bridge plans, four-file build
+and check, bounded context, domain/API projection, and backend plan/run.
+
+Deferred: removal, rollback to an older installed pointer,
+one-fresh-thread-per-skill repetition, frontend design generation, live
+acquisition/promotion, model adapters, v2 ranking replay, hosted marketplace
+publication, sharing, and deployment. The paired framework's exact-text
 generation rule is an intentional v1 fail-closed boundary; the plugin does not
 weaken or reinterpret it.
+
+Qualification addition: the capability registry, three transparent candidate
+profiles, proof plans, React/FastAPI drift fixture, non-KG-RAG In-the-Loop
+workflow contract, discovery ledger, and read-only CLI are implemented. All
+three receipts are current promotion-eligible candidate evidence, but
+registry promotion is not automatic. The AI control-plane result is limited to
+one frozen production-roster orientation and deny-then-approved repair, so it
+does not establish repeatability, deployment readiness, or general correctness.
 
 ## Local release meaning
 
 A candidate becomes locally release-ready source only after the final-byte
 checks and exact artifact manifests pass. `ARTIFACTS.sha256` binds the qualified
 v1.1 source bytes and must be regenerated after any edit. Release-ready status does not mean
-installed or released.
+hosted, published, deployed, shared, or released. A separately approved local
+development installation is recorded in the Codex dogfood receipt.
 Commit, push, PR, installation, cache update, marketplace entry, share link,
 publication, or deployment require separate authority. Any change to the
 plugin manifest, active skill instructions, bridge, baseline identities, KB,
@@ -58,4 +82,4 @@ or paired contract compatibility invalidates the handoff and requires relevant
 checks again.
 
 Future sequencing is documented in [`post-v1-roadmap.md`](post-v1-roadmap.md).
-It does not change the current uninstalled, unpublished release boundary.
+It does not change the current unpublished and undeployed release boundary.

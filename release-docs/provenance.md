@@ -6,7 +6,9 @@ Source: installed `in-the-loop` plugin 0.4.1 KG-RAG Specialist cache.
 
 The baseline package contained 63 non-pycache files. Its canonical tree digest
 and key artifact digests are in the baseline manifest. Original skill and agent
-metadata live under `references/baseline-package`; original references and
+metadata live under the plugin-level `vendor/kg-rag-specialist-baseline`
+directory so Codex does not recursively register the pinned baseline as a
+second active skill; original references and
 scripts retain their usable layout. The active Atlas Suite skill is new and
 does not modify the cache.
 
@@ -23,11 +25,12 @@ generation, installation, or external effects.
 
 ## Framework compatibility
 
-Atlas Suite v1.0.1 targets deterministic-kg-rag-framework `0.2.0` and its
-versioned `dkg-*` contracts. The bridge uses the framework itself; it does not
-translate contracts. Before importing framework code, the bridge requires the
-exact framework version, Python `>=3.11`, `dkg-framework-interface/1.0`,
-`dkg-cli/1.0`, and the declared v0.2 capability set. Legacy
+Atlas Suite v1.1.0 targets deterministic-kg-rag-framework
+`>=0.3.0,<0.4.0` and its versioned `dkg-*` contracts. The bridge uses the
+framework itself; it does not translate contracts. Before importing framework
+code, the bridge requires a compatible framework version, Python `>=3.11`,
+`dkg-framework-interface/1.0`, `dkg-cli/1.0`, and the declared v0.3 capability
+set. Legacy
 `project-atlas-*` reading is owned by the framework shim and is not duplicated
 in plugin prompts.
 
@@ -44,3 +47,21 @@ protected-surface validation.
 No device-local markdown renderer path is part of the product contract. A
 local renderer may be used during dogfood only through a logical adapter
 identity and digest.
+
+## Qualification provenance
+
+The canonical qualification root is this plugin's `qualification/` directory.
+It owns registry/profile/proof contracts and frozen Suite fixtures; it does not
+copy the DKG engine or claim ownership of In-the-Loop. Candidate receipts bind
+the current registry, profile, and proof-plan digests. The full-stack fixture
+records its FastAPI/Pydantic/Python direct-call environment; the RAG receipt
+binds an upstream DKG Harness Boot receipt. No absolute device path, network
+source, provider call, or installed-plugin state is part of those claims.
+
+Receipt v2 additionally binds canonical result, source/fixture manifest,
+complete adapter identities, root/runtime/dependency environment, producer,
+and a distinct local verifier implementation. The verifier runs in a separate
+process, reruns frozen full-stack cases, independently rebuilds/queries RAG,
+and resolves citation hashes. The signed verification record is stronger than
+producer repeatability alone, but it remains inside the same local source and
+host trust domain; an external audit is not claimed.

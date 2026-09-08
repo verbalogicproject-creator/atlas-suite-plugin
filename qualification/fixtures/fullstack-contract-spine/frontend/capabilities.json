@@ -1,0 +1,1 @@
+{"dkg_capabilities":[{"id":"tasks.list","implementations":["src/tasks.tsx#listTasks"]}]}

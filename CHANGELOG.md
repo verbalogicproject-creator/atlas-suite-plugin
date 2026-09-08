@@ -1,5 +1,87 @@
 # Changelog
 
+## AI control-plane qualification candidate - 2026-08-19
+
+Status: passing source-bound candidate evidence; registry promotion remains a
+separate owner decision.
+
+### Added
+
+- A frozen `summarize_tasks` fixture, closed bounded context packet, eight
+  adversarial cases, and two production-locked In-the-Loop 2.1 workflows.
+- One parent-driven Luna/Terra/Sol qualification run covering read-only
+  orientation, denied repair, fresh exact-file approval, minimal repair, and
+  independent closure.
+- Canonical runtime, cited reports, passing result, standalone verification,
+  and v2 receipt with normalized deterministic test-stream evidence.
+- Source-or-installed In-the-Loop contract discovery so the reinstalled Atlas
+  profile planner can use the already installed `in-the-loop` plugin bundle
+  without weakening source-bound receipt freshness.
+
+### Evidence boundary
+
+- All frozen thresholds pass with zero authority violations and unsupported
+  references; profile policy reports the current receipt promotion-eligible.
+- The proof covers one run and one temporary fixture. It does not establish
+  agent repeatability, general correctness, deployment readiness, publication,
+  or registry promotion.
+- Local development reinstallation is separately authorized for dogfood; it
+  does not alter the qualification maturity or release standing.
+
+## Capability qualification source candidate - 2026-08-18
+
+Status: source-only candidate; installed plugin cache not updated.
+
+### Added
+
+- Closed capability registry, transparent profile schema, proof plans, and
+  digest-bound candidate receipts with separately signed standalone local
+  replay verification.
+- Read-only `atlas profile list|describe|explain|plan|qualification` routes;
+  no profile execution route.
+- Frozen React/FastAPI contract-spine fixture, paired-DKG evidence-firewall
+  replay, non-KG-RAG In-the-Loop workflow contract, and discovery ledger.
+
+### Evidence boundary
+
+- Full-stack and RAG candidate receipts pass their frozen thresholds and
+  repeatability checks; result, source/fixture, adapter, environment, producer,
+  verifier, and verification-record drift fails eligibility.
+- The AI control-plane workflow passes static contract validation, but its
+  receipt intentionally fails without a frozen Codex host replay and
+  independent runtime closure.
+- No claim is automatically promoted and no install, cache update,
+  publication, deployment, or release was performed.
+
+## 1.1.0 Codex local-install dogfood - 2026-08-18
+
+Status: installed and enabled as a cachebusted local development build; not
+hosted-marketplace-published, deployed, shared, or released.
+
+### Changed
+
+- Moved the byte-identical pinned KG-RAG baseline skill metadata outside the
+  active `skills/` tree after fresh Codex discovery exposed a duplicate
+  `atlas-suite-plugin:kg-rag-specialist` identity.
+- Added recursive discovery regression coverage while preserving the original
+  63-file baseline digest.
+- Updated the provenance contract to the current Suite `1.1.0` / DKG
+  `>=0.3.0,<0.4.0` compatibility boundary.
+- Installed through the host-local `atlas-suite-local` marketplace and applied
+  the development cachebuster/reinstall flow.
+
+### Evidence boundary
+
+- A fresh, ephemeral, read-only Codex thread loaded all seven unique skills,
+  ran the five plan previews and static KG-RAG validator, and preserved the
+  protected-effect boundary.
+- Installed CLI dogfood built and validated the exact four-file site, selected
+  bounded context, mined a non-activated domain projection, emitted an API
+  schema projection, and completed a signed source-body-free backend read.
+- Removal, rollback to an older cache pointer, one-fresh-thread-per-skill
+  repetition, frontend design generation, model adapters, publication, and
+  deployment remain unqualified or separately authorized.
+
 ## 1.1.0 - framework v0.3 companion candidate
 
 Status: local source candidate; not installed, published, deployed, or
