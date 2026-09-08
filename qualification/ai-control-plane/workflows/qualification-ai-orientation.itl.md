@@ -74,4 +74,3 @@ class AtlasQualificationOrientationState(TypedDict):
 | --- | --- |
 | `delegations_so_far` | `0` |
 | `status` | `"pending"` |
-

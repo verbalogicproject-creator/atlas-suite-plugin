@@ -81,4 +81,3 @@ class AtlasQualificationRepairState(TypedDict):
 | `delegations_so_far` | `0` |
 | `repair_authority` | `false` |
 | `status` | `"pending"` |
-

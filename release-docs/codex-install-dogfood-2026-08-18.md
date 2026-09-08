@@ -1,8 +1,8 @@
 # Codex local-install dogfood — 2026-08-18
 
-Status: passed with bounded degradations and explicit remaining gaps  
+Status: passed with bounded degradations and explicit remaining gaps
 Scope: local marketplace registration, install, update/reinstall, installed
-discovery, installed CLI routes, and one fresh read-only Codex skill run  
+discovery, installed CLI routes, and one fresh read-only Codex skill run
 Proof limit: this is local development evidence. It does not prove hosted
 marketplace behavior, removal/rollback, every skill in a separate fresh thread,
 frontend design output, model adapters, publication, sharing, deployment, or
