@@ -59,8 +59,13 @@ binds an upstream DKG Harness Boot receipt. No absolute device path, network
 source, provider call, or installed-plugin state is part of those claims.
 
 Receipt v2 additionally binds canonical result, source/fixture manifest,
-complete adapter identities, root/runtime/dependency environment, producer,
-and a distinct local verifier implementation. The verifier runs in a separate
+complete adapter identities, semantic runtime/dependency environment,
+producer, and a distinct local verifier implementation. Repository sources are
+bound by repository-relative paths; external DKG and exact In-the-Loop 0.4.1
+contracts use stable `dependency/...` identities. Checkout paths and hashes of
+absolute roots are excluded. Absolute temporary paths inside the frozen AI
+runtime remain historical observation facts and are not current dependency
+identities. The verifier runs in a separate
 process, reruns frozen full-stack cases, independently rebuilds/queries RAG,
 and resolves citation hashes. The signed verification record is stronger than
 producer repeatability alone, but it remains inside the same local source and

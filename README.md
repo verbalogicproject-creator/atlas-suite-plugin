@@ -27,7 +27,8 @@ and other external effects remain separately approved actions.
 ## Paired local use
 
 Keep this repository beside `deterministic-kg-rag-framework`, or set
-`DKG_FRAMEWORK_ROOT` to its root. Open the menu:
+`DKG_FRAMEWORK_ROOT` to its root. Qualification, verifier, scenario, and bridge
+commands all honor that same variable. Open the menu:
 
 ```sh
 ./scripts/atlas
@@ -88,9 +89,13 @@ Inspect named combinations without executing them:
 These commands are deterministic and read-only; there is no profile `run`
 route. Three candidate profiles expose the full-stack contract spine, RAG
 evidence firewall, and Atlas/In-the-Loop/Codex control plane. All three have
-current passing local candidate receipts. The control-plane evidence covers
-one production-roster orientation and one deny-then-approved frozen repair;
-it does not claim repeatability or promote registry maturity.
+current passing local candidate receipts when the exact optional
+In-the-Loop 0.4.1 qualification contract is available. Without it, the
+full-stack and RAG profiles remain usable, while the AI profile reports
+`itl-qualification-contract-unavailable` as failed, stale, and non-promotable.
+The stored control-plane evidence covers one production-roster orientation and
+one deny-then-approved frozen repair; it does not claim repeatability or
+promote registry maturity.
 See [`capability profiles and qualification`](release-docs/capability-profiles.md).
 
 ## Project Atlas frontend pipeline

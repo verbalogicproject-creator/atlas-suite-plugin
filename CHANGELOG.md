@@ -1,5 +1,17 @@
 # Changelog
 
+## Qualification portability remediation - 2026-09-08
+
+- Replaced workspace-escaping claim anchors and checkout-derived receipt paths
+  with repository-local anchors and stable DKG/In-the-Loop dependency identities.
+- Unified `DKG_FRAMEWORK_ROOT` across bridge, replay, verifier, and scenario
+  paths and removed absolute Suite/DKG root hashes from environment bindings.
+- Missing exact In-the-Loop 0.4.1 qualification support now yields the typed
+  `itl-qualification-contract-unavailable` failed/stale/non-promotable AI
+  evidence state; incomplete, symlinked, tampered, and stale dependencies still
+  fail closed. Historical runtime observations were not rewritten.
+
+
 ## AI control-plane qualification candidate - 2026-08-19
 
 Status: passing source-bound candidate evidence; registry promotion remains a

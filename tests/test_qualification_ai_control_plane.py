@@ -48,6 +48,10 @@ def report(path: Path, report_id: str, claims: list[str]) -> dict:
 
 
 def golden_runtime(tmp_path: Path) -> dict:
+    try:
+        ai._itl_contract_paths(ROOT)
+    except ai.InTheLoopUnavailable:
+        pytest.skip("exact In-the-Loop 0.4.1 qualification contract is unavailable")
     target = Path(tempfile.gettempdir()) / f"atlas-ai-control-plane-pytest-{tmp_path.name}"
     if target.exists():
         shutil.rmtree(target)
@@ -88,13 +92,28 @@ def golden_runtime(tmp_path: Path) -> dict:
 
 
 def test_static_contract_locks_and_absence_fail_closed() -> None:
+    absent = ai.absent_result()
+    assert absent["status"] == "failed"
+    if absent["failures"] == ["itl-qualification-contract-unavailable"]:
+        assert absent["static_validation"]["status"] == "failed"
+        return
     static = ai.validate_static()
     assert static["status"] == "passed"
     assert static["negative_case_count"] == 8
-    assert ai.absent_result()["status"] == "failed"
-    assert ai.absent_result()["failures"] == ["real-runtime-artifact-absent"]
+    assert absent["failures"] == ["real-runtime-artifact-absent"]
     for name in ai.WORKFLOWS:
         assert ai.LOCKS[name].read_bytes() == ai.build_lock(name)
+
+
+def test_exact_missing_itl_maps_only_to_failed_non_promotable_evidence(monkeypatch: pytest.MonkeyPatch) -> None:
+    def unavailable(_root: Path) -> dict[str, Path]:
+        raise ai.InTheLoopUnavailable("itl-qualification-contract-unavailable")
+    monkeypatch.setattr(ai, "_itl_contract_paths", unavailable)
+    result = ai.absent_result()
+    assert result["status"] == "failed"
+    assert result["failures"] == ["itl-qualification-contract-unavailable"]
+    assert result["static_validation"]["status"] == "failed"
+    assert result["runtime"] is None
 
 
 def test_golden_runtime_passes_and_is_observably_bound(tmp_path: Path) -> None:

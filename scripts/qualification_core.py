@@ -12,12 +12,16 @@ import platform
 import re
 import sys
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
 class QualificationError(ValueError):
     """A qualification artifact violated its closed contract."""
+
+
+class InTheLoopUnavailable(QualificationError):
+    """The optional exact In-the-Loop 0.4.1 qualification contract is absent."""
 
 
 STANDINGS = {"observed", "documented", "derived", "proposed", "unknown", "stale", "rejected"}
@@ -97,7 +101,29 @@ def _sha(value: Any, label: str) -> str:
     return value
 
 
-def validate_registry(value: Any) -> dict[str, Any]:
+def _repository_anchor(value: Any, base: Path) -> Path:
+    if not isinstance(value, str) or not value:
+        raise QualificationError("source anchor must be a non-empty string")
+    logical = value.split("#", 1)[0]
+    pure = PurePosixPath(logical)
+    if not logical or pure.is_absolute() or "\\" in logical or any(part in {"", ".", ".."} for part in pure.parts):
+        raise QualificationError(f"source anchor escapes repository root: {value}")
+    candidate = base
+    for part in pure.parts:
+        candidate = candidate / part
+        if candidate.is_symlink():
+            raise QualificationError(f"source anchor is missing or unsafe: {value}")
+    resolved = candidate.resolve()
+    try:
+        resolved.relative_to(base.resolve())
+    except ValueError as exc:
+        raise QualificationError(f"source anchor escapes repository root: {value}") from exc
+    if not resolved.is_file():
+        raise QualificationError(f"source anchor is missing or unsafe: {value}")
+    return resolved
+
+
+def validate_registry(value: Any, root: Path | None = None) -> dict[str, Any]:
     registry = _closed(value, {"schema", "registry_id", "version", "claims", "promotion_policy", "proof_limit"}, "registry")
     if registry["schema"] != "atlas-capability-registry/1.0":
         raise QualificationError("unsupported registry schema")
@@ -121,7 +147,9 @@ def validate_registry(value: Any) -> dict[str, Any]:
         for key in ("title", "owner", "version", "probe"):
             if not isinstance(claim[key], str) or not claim[key]:
                 raise QualificationError(f"claim {key} is required")
-        _strings(claim["source_anchors"], "source anchors")
+        anchors = _strings(claim["source_anchors"], "source anchors")
+        for anchor in anchors:
+            _repository_anchor(anchor, _root(root))
         effects = _strings(claim["effects"], "effects", nonempty=False)
         for effect in effects:
             _enum(effect, EFFECTS, "effect")
@@ -431,7 +459,7 @@ def _root(root: Path | None) -> Path:
 
 def _artifacts(root: Path | None) -> tuple[Path, dict[str, Any]]:
     base = _root(root)
-    registry = validate_registry(load_json(base / "qualification" / "capability-registry.json"))
+    registry = validate_registry(load_json(base / "qualification" / "capability-registry.json"), base)
     return base, registry
 
 
@@ -457,16 +485,26 @@ def describe_profile(profile_id: str, root: Path | None = None) -> dict[str, Any
 def _file_binding(path: Path, base: Path) -> dict[str, str]:
     if path.is_symlink() or not path.is_file():
         raise QualificationError(f"binding source is missing or unsafe: {path}")
-    return {"path": os.path.relpath(path.resolve(), base.resolve()), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    try:
+        logical = path.resolve().relative_to(base.resolve()).as_posix()
+    except ValueError as exc:
+        raise QualificationError(f"repository binding escapes root: {path}") from exc
+    return {"path": logical, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
 
 
-def _dkg_root(base: Path) -> Path:
+def _dependency_binding(path: Path, logical: str) -> dict[str, str]:
+    if path.is_symlink() or not path.is_file():
+        raise QualificationError(f"dependency binding is missing or unsafe: {logical}")
+    return {"path": logical, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+
+
+def dkg_root(base: Path) -> Path:
     configured = os.environ.get("DKG_FRAMEWORK_ROOT")
     return Path(configured).expanduser().resolve() if configured else (base.parent / "deterministic-kg-rag-framework").resolve()
 
 
 def validate_dkg_identity(base: Path) -> dict[str, Any]:
-    root = _dkg_root(base)
+    root = dkg_root(base)
     metadata_path = root / "pyproject.toml"
     interface_path = root / "config" / "framework-interface.json"
     cli_path = root / "src" / "dkg" / "cli.py"
@@ -499,37 +537,57 @@ def validate_dkg_identity(base: Path) -> dict[str, Any]:
         "schema": interface["schema"], "distribution": name, "framework_version": version,
         "cli_contract": interface["cli_contract"], "python_requires": python_requires,
         "capabilities": interface["capabilities"],
-        "identity_files": [_file_binding(path, base) for path in (interface_path, metadata_path, cli_path)],
+        "identity_files": [
+            _dependency_binding(interface_path, f"dependency/deterministic-kg-rag-framework/{version}/config/framework-interface.json"),
+            _dependency_binding(metadata_path, f"dependency/deterministic-kg-rag-framework/{version}/pyproject.toml"),
+            _dependency_binding(cli_path, f"dependency/deterministic-kg-rag-framework/{version}/src/dkg/cli.py"),
+        ],
     }
 
 
 def _source_path(anchor: str, base: Path) -> Path:
-    return (base / anchor.split("#", 1)[0]).resolve()
+    return _repository_anchor(anchor, base)
+
+
+ITL_LOGICAL_PATHS = {
+    "roster": "dependency/in-the-loop/0.4.1/bindings/codex/roster.json",
+    "linter": "dependency/in-the-loop/0.4.1/scripts/lint_itl.py",
+    "locker": "dependency/in-the-loop/0.4.1/scripts/workflow_lock.py",
+    "core": "dependency/in-the-loop/0.4.1/spec/core-contract.md",
+    "orchestration": "dependency/in-the-loop/0.4.1/spec/orchestration-format.md",
+}
 
 
 def _itl_contract_paths(base: Path) -> dict[str, Path]:
-    """Resolve the authoritative ITL checkout or its installed plugin bundle."""
+    """Resolve the authoritative exact ITL checkout or installed plugin bundle."""
     source = base.parents[2] / "in-the-loop-codex"
-    source_paths = {
-        "roster": source / "bindings" / "codex" / "roster.json",
-        "linter": source / "scripts" / "lint_itl.py",
-        "locker": source / "scripts" / "workflow_lock.py",
-        "core": source / "spec" / "core-contract.md",
-        "orchestration": source / "spec" / "orchestration-format.md",
-    }
-    if all(path.is_file() and not path.is_symlink() for path in source_paths.values()):
-        return source_paths
-    installed = base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1"
-    installed_paths = {
-        "roster": installed / "skills" / "kg-rag-specialist" / "references" / "binding" / "roster.json",
-        "linter": installed / "skills" / "run-itl-workflow" / "scripts" / "lint_itl.py",
-        "locker": installed / "skills" / "run-itl-workflow" / "scripts" / "workflow_lock.py",
-        "core": installed / "skills" / "in-the-loop" / "references" / "spec" / "core-contract.md",
-        "orchestration": installed / "skills" / "in-the-loop" / "references" / "spec" / "orchestration-format.md",
-    }
-    if all(path.is_file() and not path.is_symlink() for path in installed_paths.values()):
-        return installed_paths
-    return source_paths
+    candidates = (
+        {
+            "roster": source / "bindings" / "codex" / "roster.json",
+            "linter": source / "scripts" / "lint_itl.py",
+            "locker": source / "scripts" / "workflow_lock.py",
+            "core": source / "spec" / "core-contract.md",
+            "orchestration": source / "spec" / "orchestration-format.md",
+        },
+        {
+            "roster": base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1" / "skills" / "kg-rag-specialist" / "references" / "binding" / "roster.json",
+            "linter": base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1" / "skills" / "run-itl-workflow" / "scripts" / "lint_itl.py",
+            "locker": base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1" / "skills" / "run-itl-workflow" / "scripts" / "workflow_lock.py",
+            "core": base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1" / "skills" / "in-the-loop" / "references" / "spec" / "core-contract.md",
+            "orchestration": base.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1" / "skills" / "in-the-loop" / "references" / "spec" / "orchestration-format.md",
+        },
+    )
+    for paths in candidates:
+        safe = [path.is_file() and not path.is_symlink() for path in paths.values()]
+        if all(safe):
+            return paths
+        if any(path.exists() or path.is_symlink() for path in paths.values()):
+            raise QualificationError("authoritative In-the-Loop 0.4.1 contract is incomplete or unsafe")
+    raise InTheLoopUnavailable("itl-qualification-contract-unavailable")
+
+
+def _itl_identity_bindings(paths: dict[str, Path]) -> list[dict[str, str]]:
+    return [_dependency_binding(paths[key], ITL_LOGICAL_PATHS[key]) for key in sorted(paths)]
 
 
 def build_current_bindings(profile_id: str, profile: dict[str, Any], registry: dict[str, Any], base: Path, result: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -542,19 +600,28 @@ def build_current_bindings(profile_id: str, profile: dict[str, Any], registry: d
         base / "scripts" / "qualification_verifier.py", base / "qualification" / "profiles" / f"{profile_id}.atlas-profile.json",
         base / profile["qualification"]["proof_plan"],
     ]
+    itl: dict[str, Path] | None = None
+    external_source_files: list[dict[str, str]] = []
     if profile_id == "fullstack-contract-spine":
         sources = common + [base / "scripts" / "qualification_scenarios.py"] + sorted((base / "qualification" / "fixtures" / "fullstack-contract-spine").rglob("*"))
     elif profile_id == "rag-evidence-firewall":
         sources = common + [base / "qualification" / "fixtures" / "fullstack-contract-spine" / "contract.json", base / "release-docs" / "architecture.md"]
     else:
         ai_root = base / "qualification" / "ai-control-plane"
-        itl = _itl_contract_paths(base)
+        try:
+            itl = _itl_contract_paths(base)
+        except InTheLoopUnavailable:
+            itl = None
         sources = common + [
             base / "scripts" / "qualification_ai_control_plane.py",
             *sorted(path for path in ai_root.rglob("*") if path.is_file()),
-            itl["roster"], itl["linter"], itl["locker"], itl["core"], itl["orchestration"],
         ]
-    files = sorted((_file_binding(path, base) for path in sources if path.is_file()), key=lambda item: item["path"])
+        if itl is not None:
+            external_source_files = _itl_identity_bindings(itl)
+    files = sorted(
+        [_file_binding(path, base) for path in sources if path.is_file()] + external_source_files,
+        key=lambda item: item["path"],
+    )
     source_manifest = {"files": files, "sha256": digest(files)}
     claims = {item["id"]: item for item in registry["claims"]}
     dkg_identity: dict[str, Any] | None = None
@@ -564,12 +631,22 @@ def build_current_bindings(profile_id: str, profile: dict[str, Any], registry: d
         identity_files = sorted((_file_binding(_source_path(anchor, base), base) for anchor in claim["source_anchors"]), key=lambda item: item["path"])
         contract: dict[str, Any] = {"schema": component["adapter"], "owner": claim["owner"], "version": claim["version"]}
         if component["adapter"].startswith("itl-") or component["adapter"] == "atlas-itl-grounding/1.0":
-            itl = _itl_contract_paths(base)
-            authoritative = [itl["roster"], itl["linter"], itl["locker"], itl["core"], itl["orchestration"]]
-            if any(not path.is_file() or path.is_symlink() for path in authoritative):
-                raise QualificationError("authoritative In-the-Loop linter or workflow contract is unavailable")
-            identity_files = sorted(identity_files + [_file_binding(path, base) for path in authoritative], key=lambda item: item["path"])
-            contract = {**contract, "authoritative_linter": "in-the-loop-codex/scripts/lint_itl.py", "authoritative_locker": "in-the-loop-codex/scripts/workflow_lock.py", "production_roster": "in-the-loop-codex/bindings/codex/roster.json", "workflow_contract": "in-the-loop-codex/spec/orchestration-format.md"}
+            if itl is None:
+                try:
+                    itl = _itl_contract_paths(base)
+                except InTheLoopUnavailable:
+                    itl = None
+            if itl is not None:
+                identity_files = sorted(identity_files + _itl_identity_bindings(itl), key=lambda item: item["path"])
+            contract = {
+                **contract,
+                "qualification_contract": "dependency/in-the-loop/0.4.1",
+                "qualification_contract_available": itl is not None,
+                "authoritative_linter": ITL_LOGICAL_PATHS["linter"],
+                "authoritative_locker": ITL_LOGICAL_PATHS["locker"],
+                "production_roster": ITL_LOGICAL_PATHS["roster"],
+                "workflow_contract": ITL_LOGICAL_PATHS["orchestration"],
+            }
         if component["adapter"].startswith("dkg-") or component["adapter"] == "atlas-contract-spine/1.0":
             dkg_identity = dkg_identity or validate_dkg_identity(base)
             contract = dkg_identity
@@ -586,7 +663,11 @@ def build_current_bindings(profile_id: str, profile: dict[str, Any], registry: d
         "schema": "atlas-qualification-environment/1.0",
         "python": {"implementation": platform.python_implementation(), "version": platform.python_version()},
         "platform": {"system": platform.system(), "machine": platform.machine()},
-        "roots": {"suite": digest(str(base.resolve())), "dkg": digest(str(_dkg_root(base))) if any(item["adapter"].startswith("dkg-") or item["adapter"] == "atlas-contract-spine/1.0" for item in profile["components"]) else None},
+        "dependency_identities": {
+            "suite": "atlas-suite-plugin/1.1.0",
+            "dkg": f"deterministic-kg-rag-framework/{dkg_identity['framework_version']}" if dkg_identity is not None else None,
+            "in_the_loop": "in-the-loop/0.4.1" if itl is not None else None,
+        },
         "dependencies": dependencies,
     }
     environment = {"boundary": boundary, "sha256": digest(boundary)}
@@ -595,25 +676,23 @@ def build_current_bindings(profile_id: str, profile: dict[str, Any], registry: d
 
 def _adapter_checks(profile: dict[str, Any], root: Path | None = None) -> list[dict[str, Any]]:
     base = _root(root)
-    configured_dkg = os.environ.get("DKG_FRAMEWORK_ROOT")
-    dkg_root = Path(configured_dkg).expanduser() if configured_dkg else base.parent / "deterministic-kg-rag-framework"
     try:
         validate_dkg_identity(base)
         dkg_ready = True
     except QualificationError:
         dkg_ready = False
-    itl = _itl_contract_paths(base)
-    itl_ready = all(path.is_file() and not path.is_symlink() for path in (
-        base / "skills" / "kg-rag-specialist" / "references" / "binding" / "workflows" / "kg-rag-specialist.itl.md",
-        itl["roster"], itl["linter"], itl["locker"], itl["core"], itl["orchestration"],
-    ))
+    try:
+        _itl_contract_paths(base)
+        itl_ready = True
+    except InTheLoopUnavailable:
+        itl_ready = False
     checks = []
     for component in profile["components"]:
         adapter = component["adapter"]
         if adapter.startswith("dkg-") or adapter == "atlas-contract-spine/1.0":
             ready, reason = dkg_ready, "paired-dkg-contract-ready" if dkg_ready else "paired-dkg-contract-unavailable"
         elif adapter.startswith("itl-") or adapter == "atlas-itl-grounding/1.0":
-            ready, reason = itl_ready, "vendored-itl-contract-ready" if itl_ready else "vendored-itl-contract-unavailable"
+            ready, reason = itl_ready, "exact-itl-0.4.1-contract-ready" if itl_ready else "itl-qualification-contract-unavailable"
         elif adapter == "atlas-profile/1.0":
             ready, reason = True, "local-profile-contract-ready"
         elif adapter == "atlas-context-packet/1.0":

@@ -15,7 +15,9 @@ authorized task actually runs.
 ## Cold start
 
 Keep the Suite beside `deterministic-kg-rag-framework`, or set
-`DKG_FRAMEWORK_ROOT`. From the Suite root, start with:
+`DKG_FRAMEWORK_ROOT`. Every bridge and qualification process honors the same
+root. In-the-Loop 0.4.1 is an optional external qualification dependency, not
+vendored Suite runtime. From the Suite root, start with:
 
 ```sh
 ./scripts/atlas profile list
@@ -41,8 +43,10 @@ The first three candidate profiles are:
 
 Passing candidate receipts do not silently promote registry maturity. Receipt
 v2 binds the stored result, frozen source/fixture manifest, exact adapter
-contracts and identities, runtime/root/dependency environment, and a separately
-signed standalone-replay verification record. The verifier process reruns the
+contracts and stable logical dependency identities, semantic runtime and
+dependency environment, and a separately signed standalone-replay verification
+record. Checkout locations and absolute Suite/DKG roots are not receipt
+identities. The verifier process reruns the
 full-stack suite twice, independently rebuilds and queries the isolated RAG
 fixture, or validates the AI packet, locks, citations, authority epoch, exact
 diff, manifests, and normalized test evidence. Promotion is a separate owner decision and
@@ -63,6 +67,8 @@ Regenerate canonical candidate results and receipts after an intentional
 source change:
 
 ```sh
+DKG_FRAMEWORK_ROOT=/path/to/deterministic-kg-rag-framework \
+ATLAS_AI_RUNTIME_ARTIFACT=qualification/ai-control-plane/runs/ai-control-plane-frozen-1/runtime.json \
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_receipts.py --write
 ```
 
@@ -77,6 +83,12 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   tests/test_qualification_ai_control_plane.py \
   tests/test_qualification_scenarios.py
 ```
+
+When the exact In-the-Loop 0.4.1 linter, locker, roster, and contracts are
+absent, only that typed dependency condition becomes a canonical failed AI
+result with reason `itl-qualification-contract-unavailable`; the AI receipt is
+non-promotable and stored passing evidence is reported stale. Partial,
+symlinked, tampered, or stale-lock dependencies remain hard failures.
 
 The results live under `qualification/results/`; standalone-replay verification records
 live under `qualification/verifications/`; digest-bound candidate receipts

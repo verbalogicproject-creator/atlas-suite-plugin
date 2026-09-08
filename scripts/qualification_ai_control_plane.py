@@ -17,7 +17,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from qualification_core import QualificationError, canonical_bytes, digest, load_json
+from qualification_core import InTheLoopUnavailable, QualificationError, _itl_contract_paths, canonical_bytes, digest, load_json
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,16 +30,6 @@ WORKFLOWS = {
     "repair": AI_ROOT / "workflows" / "qualification-ai-repair.itl.md",
 }
 LOCKS = {name: AI_ROOT / "locks" / f"{name}.production.lock.json" for name in WORKFLOWS}
-ITL_ROOT = ROOT.parents[2] / "in-the-loop-codex"
-if (ITL_ROOT / "scripts" / "workflow_lock.py").is_file():
-    ROSTER = ITL_ROOT / "bindings" / "codex" / "roster.json"
-    LINTER = ITL_ROOT / "scripts" / "lint_itl.py"
-    LOCKER = ITL_ROOT / "scripts" / "workflow_lock.py"
-else:
-    ITL_ROOT = ROOT.parents[2] / "in-the-loop-local" / "in-the-loop" / "0.4.1"
-    ROSTER = ITL_ROOT / "skills" / "kg-rag-specialist" / "references" / "binding" / "roster.json"
-    LINTER = ITL_ROOT / "skills" / "run-itl-workflow" / "scripts" / "lint_itl.py"
-    LOCKER = ITL_ROOT / "skills" / "run-itl-workflow" / "scripts" / "workflow_lock.py"
 MAX_SOURCES = 4
 MAX_BYTES = 16 * 1024
 MAX_TOKENS = 1800
@@ -149,7 +139,8 @@ def normalized_test_stream_sha(value: bytes) -> str:
 
 
 def build_lock(name: str) -> bytes:
-    completed = _command(sys.executable, str(LOCKER), str(WORKFLOWS[name]), "--registry", str(ROSTER), "--profile", "production")
+    itl = _itl_contract_paths(ROOT)
+    completed = _command(sys.executable, str(itl["locker"]), str(WORKFLOWS[name]), "--registry", str(itl["roster"]), "--profile", "production")
     if completed.returncode:
         raise QualificationError(completed.stderr.decode() or completed.stdout.decode())
     return completed.stdout
@@ -157,9 +148,10 @@ def build_lock(name: str) -> bytes:
 
 def validate_static() -> dict[str, Any]:
     packet = validate_packet()
+    itl = _itl_contract_paths(ROOT)
     workflow_checks = []
     for name, workflow in WORKFLOWS.items():
-        linted = _command(sys.executable, str(LINTER), str(workflow))
+        linted = _command(sys.executable, str(itl["linter"]), str(workflow))
         if linted.returncode:
             raise QualificationError(linted.stdout.decode() + linted.stderr.decode())
         expected = build_lock(name)
@@ -316,10 +308,35 @@ def verify_runtime(value: dict[str, Any]) -> dict[str, Any]:
     return {**result, "result_sha256": digest(result)}
 
 
-def absent_result() -> dict[str, Any]:
+def _itl_unavailable_result() -> dict[str, Any]:
+    static = {
+        "schema": "atlas-ai-control-plane-static/1.0",
+        "status": "failed",
+        "packet_sha256": digest(validate_packet()),
+        "workflows": [],
+        "seeded_fixture": "not-run",
+        "golden_repair": "not-run",
+        "negative_case_count": 0,
+        "proof_limit": "The exact optional In-the-Loop 0.4.1 qualification contract was unavailable; no workflow validation or agent dispatch occurred.",
+    }
     result = {
         "schema": "atlas-ai-control-plane-result/2.0", "status": "failed",
-        "failures": ["real-runtime-artifact-absent"], "static_validation": validate_static(),
+        "failures": ["itl-qualification-contract-unavailable"], "static_validation": static,
+        "runtime": None,
+        "metrics": {"task_success_min": 0, "authority_policy_violations_max": 0, "closure_evidence_completeness_min": 0, "unsupported_reference_count_max": 0},
+        "proof_limit": "The exact optional In-the-Loop 0.4.1 qualification dependency was unavailable; the profile is failed, stale, and non-promotable.",
+    }
+    return {**result, "result_sha256": digest(result)}
+
+
+def absent_result() -> dict[str, Any]:
+    try:
+        static = validate_static()
+    except InTheLoopUnavailable:
+        return _itl_unavailable_result()
+    result = {
+        "schema": "atlas-ai-control-plane-result/2.0", "status": "failed",
+        "failures": ["real-runtime-artifact-absent"], "static_validation": static,
         "runtime": None,
         "metrics": {"task_success_min": 0, "authority_policy_violations_max": 0, "closure_evidence_completeness_min": 0, "unsupported_reference_count_max": 0},
         "proof_limit": "Static qualification passed, but no parent-driven native-agent runtime artifact was supplied; the profile remains ineligible.",

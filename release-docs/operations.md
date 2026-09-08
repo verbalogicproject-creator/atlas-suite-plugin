@@ -17,6 +17,8 @@ Qualification-specific checks and canonical candidate-artifact regeneration:
 ./scripts/atlas profile list
 ./scripts/atlas profile plan fullstack-contract-spine
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_receipts.py
+DKG_FRAMEWORK_ROOT=/path/to/deterministic-kg-rag-framework \
+ATLAS_AI_RUNTIME_ARTIFACT=qualification/ai-control-plane/runs/ai-control-plane-frozen-1/runtime.json \
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_receipts.py --write
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/qualification_ai_control_plane.py \
   verify qualification/ai-control-plane/runs/ai-control-plane-frozen-1/runtime.json
@@ -29,9 +31,16 @@ changes. It does not promote claims or produce a release receipt. The local
 verifier runs as a distinct read-only process, repeats the frozen qualification,
 and rejects semantically tampered producer results; it is not an external trust domain.
 The stored AI runtime artifact is a single-run, source- and host-bound
-candidate. Regeneration requires fresh active-session approval for the exact
+historical observation. Its original absolute temporary paths are retained as
+observation facts, but new source, adapter, DKG, and In-the-Loop bindings use
+repository-local or `dependency/...` logical identities. Regeneration requires fresh active-session approval for the exact
 temporary repair target and must set `ATLAS_AI_RUNTIME_ARTIFACT` explicitly;
-ordinary replay without that variable fails closed to runtime absence.
+ordinary replay without that variable fails closed to runtime absence. If
+the exact optional In-the-Loop 0.4.1 qualification contract is wholly absent,
+replay emits the typed `itl-qualification-contract-unavailable` failed AI
+candidate; profile qualification marks prior AI evidence stale and
+non-promotable. Partial, symlinked, malformed, tampered, and stale-lock
+conditions are not converted to availability and still fail closed.
 
 Also run the plugin manifest validator and the skill-creator quick validator
 from their installed development-tool locations against each of the seven

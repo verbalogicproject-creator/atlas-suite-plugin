@@ -9,6 +9,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -22,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "qualification" / "fixtures" / "fullstack-contract-spine"
 WORKFLOW = ROOT / "qualification" / "workflows" / "repository-orientation.itl.md"
 DISCOVERY = ROOT / "qualification" / "discovery-candidates.json"
-DKG_ROOT = ROOT.parent / "deterministic-kg-rag-framework"
+DKG_ROOT = Path(os.environ.get("DKG_FRAMEWORK_ROOT", ROOT.parent / "deterministic-kg-rag-framework")).expanduser().resolve()
 DKG_PACK = DKG_ROOT / "config" / "domain-packs" / "repository-architecture-v2.json"
 LAYERS = (
     "declaration-identity",

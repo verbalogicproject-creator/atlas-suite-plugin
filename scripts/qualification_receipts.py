@@ -12,13 +12,13 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from qualification_core import build_current_bindings, canonical_bytes, digest, load_json, validate_profile, validate_proof_plan, validate_receipt, validate_registry, validate_verification_record
+from qualification_core import InTheLoopUnavailable, build_current_bindings, canonical_bytes, digest, dkg_root, load_json, validate_profile, validate_proof_plan, validate_receipt, validate_registry, validate_verification_record
 from qualification_scenarios import qualify_suite, validate_workflow
-from qualification_ai_control_plane import absent_result, verify_runtime
+from qualification_ai_control_plane import _itl_unavailable_result, absent_result, verify_runtime
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DKG_ROOT = ROOT.parent / "deterministic-kg-rag-framework"
+DKG_ROOT = dkg_root(ROOT)
 VERIFIER = ROOT / "scripts" / "qualification_verifier.py"
 
 
@@ -75,7 +75,10 @@ def replay_results() -> dict[str, dict[str, Any]]:
     rag_first = _rag_replay()
     rag_second = _rag_replay()
     runtime_path = os.environ.get("ATLAS_AI_RUNTIME_ARTIFACT")
-    ai_result = verify_runtime(load_json(Path(runtime_path))) if runtime_path else absent_result()
+    try:
+        ai_result = verify_runtime(load_json(Path(runtime_path))) if runtime_path else absent_result()
+    except InTheLoopUnavailable:
+        ai_result = _itl_unavailable_result()
     return {
         "fullstack-contract-spine": _signed({**fullstack_first, "repeatable": fullstack_first == fullstack_second}),
         "rag-evidence-firewall": _signed({**rag_first, "repeatable": rag_first == rag_second}),

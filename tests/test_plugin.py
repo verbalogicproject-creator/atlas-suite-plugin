@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-FRAMEWORK = ROOT.parent / "deterministic-kg-rag-framework"
+FRAMEWORK = Path(os.environ.get("DKG_FRAMEWORK_ROOT", ROOT.parent / "deterministic-kg-rag-framework")).expanduser().resolve()
 IGNORED_TREE_PARTS = {".git", ".dogfood-state", ".pytest_cache", ".venv", "__pycache__"}
 REQUIRED_FRAMEWORK_CAPABILITIES = [
     "api-schema-projection",
@@ -214,6 +214,23 @@ class PluginTests(unittest.TestCase):
                     direct_boot = subprocess.run([sys.executable, "-m", "dkg", "boot", "--state-root", str(direct_state)], env=environment, check=True, capture_output=True).stdout
                     bridge_boot = subprocess.run([sys.executable, str(ROOT / "scripts" / "dkg_bridge.py"), "boot", "--state-root", str(bridge_state)], env=environment, check=True, capture_output=True).stdout
                     self.assertEqual(direct_boot, bridge_boot)
+
+    def test_qualification_modules_honor_dkg_framework_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            configured = str(Path(temporary).resolve())
+            probe = (
+                "from qualification_core import dkg_root; "
+                "import qualification_receipts, qualification_scenarios, qualification_verifier; "
+                "from pathlib import Path; root=Path.cwd(); expected=Path(" + repr(configured) + "); "
+                "assert dkg_root(root)==expected; assert qualification_receipts.DKG_ROOT==expected; "
+                "assert qualification_scenarios.DKG_ROOT==expected; assert qualification_verifier.DKG_ROOT==expected"
+            )
+            completed = subprocess.run(
+                [sys.executable, "-c", probe], cwd=ROOT,
+                env={**os.environ, "DKG_FRAMEWORK_ROOT": configured, "PYTHONPATH": str(ROOT / "scripts"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True, text=True,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
 
     def test_bridge_missing_framework_fails_closed(self) -> None:
         environment = {**os.environ, "DKG_FRAMEWORK_ROOT": str(ROOT / "missing-framework")}

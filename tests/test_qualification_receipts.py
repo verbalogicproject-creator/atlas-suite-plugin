@@ -38,12 +38,15 @@ class QualificationReceiptTests(unittest.TestCase):
         result = generate()
         observation = result["observations"]["ai-tool-control-plane"]
         receipt = result["receipts"]["ai-tool-control-plane"]
-        self.assertEqual(observation["static_validation"]["status"], "passed")
         self.assertIsNone(observation["runtime"])
         self.assertEqual(receipt["status"], "failed")
         self.assertTrue(receipt["independent_verification"])
         self.assertEqual(result["verifications"]["ai-tool-control-plane"]["outcome"], "verified-fail")
-        self.assertIn("real-runtime-artifact-absent", receipt["failures"])
+        if observation["failures"] == ["itl-qualification-contract-unavailable"]:
+            self.assertEqual(observation["static_validation"]["status"], "failed")
+        else:
+            self.assertEqual(observation["static_validation"]["status"], "passed")
+            self.assertIn("real-runtime-artifact-absent", receipt["failures"])
 
     def test_all_bound_drift_is_ineligible_and_itl_drift_is_reported_stale(self) -> None:
         replay = generate()
@@ -65,7 +68,12 @@ class QualificationReceiptTests(unittest.TestCase):
         ai_profile = validate_profile(load_json(ROOT / "qualification" / "profiles" / "ai-tool-control-plane.atlas-profile.json"), registry)
         ai_current = build_current_bindings("ai-tool-control-plane", ai_profile, registry, ROOT)
         paths = {item["path"] for item in ai_current["source_manifest"]["files"]}
-        self.assertTrue(any(path.endswith("in-the-loop-codex/scripts/lint_itl.py") for path in paths))
+        itl_contracts = [
+            item["contract"] for item in ai_current["adapter_bindings"]["items"]
+            if item["adapter"].startswith("itl-") or item["adapter"] == "atlas-itl-grounding/1.0"
+        ]
+        available = all(item["qualification_contract_available"] for item in itl_contracts)
+        self.assertEqual("dependency/in-the-loop/0.4.1/scripts/lint_itl.py" in paths, available)
         itl_drift = copy.deepcopy(ai_current)
         itl_drift["source_manifest"]["sha256"] = "e" * 64
         with mock.patch.object(qc, "build_current_bindings", return_value=itl_drift):

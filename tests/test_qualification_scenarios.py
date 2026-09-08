@@ -10,6 +10,8 @@ import pytest
 
 
 ROOT = Path(__file__).parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from qualification_core import InTheLoopUnavailable, _itl_contract_paths
 SCRIPT = ROOT / "scripts" / "qualification_scenarios.py"
 SPEC = importlib.util.spec_from_file_location("qualification_scenarios", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
@@ -65,9 +67,10 @@ def test_non_kg_rag_workflow_has_static_control_boundaries() -> None:
 
 
 def test_non_kg_rag_workflow_passes_authoritative_itl_linter_when_available() -> None:
-    linter = ROOT.parents[2] / "in-the-loop-codex" / "scripts" / "lint_itl.py"
-    if not linter.is_file():
-        pytest.skip("authoritative In-the-Loop linter sibling is unavailable")
+    try:
+        linter = _itl_contract_paths(ROOT)["linter"]
+    except InTheLoopUnavailable:
+        pytest.skip("exact In-the-Loop 0.4.1 qualification contract is unavailable")
     completed = subprocess.run(
         [sys.executable, str(linter), str(scenarios.WORKFLOW)],
         check=False,

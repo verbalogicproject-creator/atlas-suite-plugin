@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from qualification_core import build_current_bindings, canonical_bytes, digest, load_json, validate_profile, validate_registry, validate_verification_record
+from qualification_core import build_current_bindings, canonical_bytes, digest, dkg_root, load_json, validate_profile, validate_registry, validate_verification_record
 from qualification_scenarios import qualify_suite, validate_workflow
 from qualification_ai_control_plane import absent_result, verify_runtime
 
@@ -20,7 +20,7 @@ from qualification_ai_control_plane import absent_result, verify_runtime
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCER = ROOT / "scripts" / "qualification_receipts.py"
 VERIFIER = Path(__file__).resolve()
-DKG_ROOT = ROOT.parent / "deterministic-kg-rag-framework"
+DKG_ROOT = dkg_root(ROOT)
 
 
 def _raw_sha(path: Path) -> str:

@@ -35,9 +35,15 @@
   fields, adapters, components, authority sources, and stale receipt digests;
 - profile CLI output is canonical and read-only, and no execution route exists;
 - full-stack and RAG candidate receipts replay byte-identically, while the AI
-  candidate binds one real production-roster host run; all three pass frozen
-  thresholds with separately signed standalone verification records;
+  candidate binds one real production-roster host run when exact optional
+  In-the-Loop 0.4.1 qualification contracts are present; without them the AI
+  result is typed failed/stale/non-promotable with
+  `itl-qualification-contract-unavailable`; all passing candidates use
+  separately signed standalone verification records and
   result/source/adapter/environment/verifier drift is ineligible;
+- claim anchors are repository-contained regular files, external dependency
+  bindings use stable logical identities, and no absolute Suite/DKG root hash
+  participates in current receipt identity;
 - both repository artifact manifests verify after all documentation and source
   bytes stabilize.
 

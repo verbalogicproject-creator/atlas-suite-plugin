@@ -73,13 +73,19 @@ class ProfileCliTests(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0)
         self.assertEqual(completed.stdout, b"")
 
-    def test_verified_ai_receipt_is_visible_and_policy_eligible(self) -> None:
+    def test_verified_ai_receipt_is_visible_and_optional_itl_controls_freshness(self) -> None:
+        plan = json.loads(self.run_profile("plan", "ai-tool-control-plane").stdout)
         value = json.loads(self.run_profile("qualification", "ai-tool-control-plane").stdout)
-        self.assertTrue(value["promotion_eligible"])
-        self.assertEqual(value["status"], "current")
-        self.assertEqual(value["receipts"][0]["receipt"]["status"], "passed")
-        self.assertEqual(value["receipts"][0]["receipt"]["failures"], [])
         self.assertEqual(value["operation"], "read-only")
+        if plan["status"] == "ready":
+            self.assertTrue(value["promotion_eligible"])
+            self.assertEqual(value["status"], "current")
+            self.assertEqual(value["receipts"][0]["receipt"]["status"], "passed")
+            self.assertEqual(value["receipts"][0]["receipt"]["failures"], [])
+        else:
+            self.assertFalse(value["promotion_eligible"])
+            self.assertEqual(value["status"], "stale")
+            self.assertTrue(any(item["reason"] == "itl-qualification-contract-unavailable" for item in plan["adapter_checks"]))
 
 
 if __name__ == "__main__":

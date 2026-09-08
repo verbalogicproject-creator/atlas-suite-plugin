@@ -135,6 +135,43 @@ class QualificationCoreTests(unittest.TestCase):
                 path.write_text("frozen contract\n", encoding="utf-8")
             self.assertEqual(qc._itl_contract_paths(base), expected)
 
+    def test_registry_anchors_are_repository_local_and_safe(self) -> None:
+        for unsafe in ("/absolute/source.md", "../outside.md", "missing-source.md"):
+            registry = copy.deepcopy(self.registry)
+            registry["claims"][0]["source_anchors"] = [unsafe]
+            with self.assertRaises(qc.QualificationError):
+                qc.validate_registry(registry, ROOT)
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "target"
+            target.write_text("anchor\n", encoding="utf-8")
+            link = Path(temporary) / "link"
+            link.symlink_to(target)
+            with self.assertRaisesRegex(qc.QualificationError, "missing or unsafe"):
+                qc._repository_anchor("link", Path(temporary))
+
+    def test_dependency_bindings_and_environment_are_checkout_stable(self) -> None:
+        profile = qc.validate_profile(self.profile("fullstack-contract-spine"), self.registry)
+        bindings = qc.build_current_bindings("fullstack-contract-spine", profile, self.registry, ROOT)
+        dkg_contract = next(item["contract"] for item in bindings["adapter_bindings"]["items"] if item["adapter"] == "atlas-contract-spine/1.0")
+        paths = {item["path"] for item in dkg_contract["identity_files"]}
+        self.assertIn("dependency/deterministic-kg-rag-framework/0.3.0/pyproject.toml", paths)
+        boundary = bindings["environment"]["boundary"]
+        self.assertNotIn("roots", boundary)
+        self.assertEqual(boundary["dependency_identities"]["suite"], "atlas-suite-plugin/1.1.0")
+        self.assertFalse(any(str(ROOT) in str(value) for value in boundary.values()))
+
+    def test_missing_itl_is_typed_but_partial_itl_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary) / "cache" / "atlas-suite-local" / "atlas-suite-plugin" / "1.1.0"
+            base.mkdir(parents=True)
+            with self.assertRaisesRegex(qc.InTheLoopUnavailable, "itl-qualification-contract-unavailable"):
+                qc._itl_contract_paths(base)
+            partial = base.parents[2] / "in-the-loop-codex" / "scripts" / "lint_itl.py"
+            partial.parent.mkdir(parents=True)
+            partial.write_text("partial\n", encoding="utf-8")
+            with self.assertRaisesRegex(qc.QualificationError, "incomplete or unsafe"):
+                qc._itl_contract_paths(base)
+
     def test_profile_operations_are_read_only(self) -> None:
         before = {path: path.read_bytes() for path in (ROOT / "qualification").rglob("*") if path.is_file()}
         plan = qc.plan_profile("fullstack-contract-spine", ROOT)
